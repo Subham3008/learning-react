@@ -1,11 +1,14 @@
-import React from 'react'
+import React from "react";
+import Navbar from "./Navbar";
+import Center from "./Center";
 
-function Section1() {
+function Section1(props) {
   return (
-    <div>
-      
+    <div className="h-screen w-full">
+      <Navbar />
+      <Center users={props.users}/>
     </div>
-  )
+  );
 }
 
-export default Section1
+export default Section1;
