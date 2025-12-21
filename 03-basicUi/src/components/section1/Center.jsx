@@ -12,7 +12,7 @@ const Center = () => {
         <br />
         and every swings brings to yous closer to victory
       </p>
-      <button>Start your own journey</button>
+      <h3>Start your own journey</h3>
     </div>
   );
 };
