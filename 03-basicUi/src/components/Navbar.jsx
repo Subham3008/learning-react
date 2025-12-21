@@ -1,4 +1,4 @@
-import React from "react";
+import "remixicon/fonts/remixicon.css";
 
 const Navbar = () => {
   return (
@@ -14,7 +14,9 @@ const Navbar = () => {
         <h3>Contacts</h3>
       </div>
       <div>
-        <button>Book now</button>
+        <button>
+          Book now<i class="ri-arrow-right-up-line"></i>
+        </button>
       </div>
     </div>
   );

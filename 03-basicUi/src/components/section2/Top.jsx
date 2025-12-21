@@ -8,7 +8,7 @@ const Top = () => {
       </div>
       <div className="right">
         <h3>
-          At Horizan, we don't just play tennis - we live it.Since 2021 our club
+          At Horizan, we don't just play tennis - we live it.Since 2021, our club
           has been a Home for a players of all levels, form eager beginners to
           seasoned pros.
         </h3>
