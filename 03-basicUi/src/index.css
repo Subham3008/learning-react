@@ -28,7 +28,7 @@ main {
   gap: 2rem;
 }
 
-.nav button{
+.nav button {
   font-size: 1rem;
   background-color: rgb(31, 31, 67);
   color: white;
@@ -89,11 +89,8 @@ main {
   height: 100dvh;
   display: flex;
   flex-direction: column;
+  justify-content: space-evenly;
   gap: 2rem;
-  /* display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative; */
 }
 
 .sec2 .top {
@@ -105,7 +102,6 @@ main {
 }
 
 .top .left h3 {
-  /* width: fit-content; */
   border: 1px solid rgb(52, 52, 52);
   border-radius: 1rem;
   display: flex;
@@ -132,9 +128,88 @@ main {
   gap: 2rem;
 }
 
-.mid .elem{
+.mid .elem {
   width: 33%;
-  height: 400px;
-  background-color: aqua;
+  /* height: 400px; */
   border-radius: 2rem;
+  box-shadow: 0 0 20px rgba(94, 94, 94, 0.571);
+}
+
+.mid .left {
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  /* justify-content: space-between; */
+  gap: 2rem;
+  background-color: #0d1a2d;
+  color: white;
+}
+.mid .left h3 {
+  font-size: 2.2rem;
+}
+
+.mid .left h3 span {
+  opacity: 0.6;
+}
+
+.mid .left h4 {
+  font-size: 2rem;
+}
+
+.mid .cen {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-image: url(https://images.unsplash.com/photo-1629983004130-48670a1ef18a?q=80&w=1172&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D);
+  background-position: center;
+  background-size: cover;
+}
+
+.mid .cen h3 {
+  /* border: 1px solid; */
+  padding: 0.5rem 1rem;
+  background-color: rgba(255, 255, 255, 0.319);
+  border-radius: 1rem;
+  color: white;
+}
+
+.mid .right {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 2rem;
+  background-color: aliceblue;
+  color: #0d1a2d;
+}
+
+.mid .right .top {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.mid .right .top h1 {
+  font-size: 4rem;
+  font-weight: 500;
+}
+.mid .right .top p {
+  font-size: 1.1rem;
+}
+
+.mid .right .bottom {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-size: 1.3rem;
+}
+
+.bottom-content{
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  text-align: center;
+}
+
+.bottom-content .content{
+  font-size: 1.3rem;
 }
