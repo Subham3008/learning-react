@@ -1,10 +1,19 @@
 import React from "react";
+import { useState } from "react";
 
 const Form = () => {
+  const [username, setusername] = useState("");
+  const [allUsers, setallUsers] = useState([]);
   const submitHandler = (e) => {
     e.preventDefault();
-    console.log("submitted");
+    // console.log(username);
+    const newAllUsers = [...allUsers]
+    newAllUsers.push(username)
+    console.log(newAllUsers);
+    setallUsers(newAllUsers)
+    setusername("");
   };
+
   return (
     <div>
       <form
@@ -14,10 +23,11 @@ const Form = () => {
         className="bg-gray-300 flex flex-col items-center gap-4 justify-center w-62.5 p-4 rounded-xl"
       >
         <input
+          value={username}
           type="text"
           placeholder="Enter your name"
           onChange={(e) => {
-            console.log(e.target.value);
+            setusername(e.target.value);
           }}
         />
         <button
