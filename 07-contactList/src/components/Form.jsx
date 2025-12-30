@@ -1,20 +1,17 @@
-import React from "react";
 import { useState } from "react";
-import Card from "./Card";
 
-const Form = () => {
+const Form = ({ allUser, setAllUser }) => {
   const [name, setName] = useState("");
   const [role, setRole] = useState("");
   const [description, setDescription] = useState("");
   const [imageUrl, setImageUrl] = useState("");
-  const [allUser, setallUser] = useState([]);
 
   const submitHandler = (e) => {
     e.preventDefault();
     const newUser = [...allUser];
     newUser.push({ name, role, description, imageUrl });
-    setallUser(newUser);
-    // console.log(newUser)
+    setAllUser(newUser);
+    // setAllUser([...allUser, { name, role, description, imageUrl }]);
     setName("");
     setDescription("");
     setRole("");
@@ -23,11 +20,13 @@ const Form = () => {
   return (
     <div>
       <form
+        className="flex flex-col w-full h-full gap-3 bg-blue-100 items-center rounded- shadow-2xl rounded-2xl"
         onSubmit={(e) => {
           submitHandler(e);
         }}
       >
         <input
+          className="border-emerald-700 border-2 text-xl font-semibold px-5 py-2 rounded m-2 w-[65%]"
           type="text"
           placeholder="Enter your name"
           required
@@ -37,6 +36,7 @@ const Form = () => {
           }}
         />
         <input
+          className="border-emerald-700 border-2 text-xl font-semibold px-5 py-2 rounded m-2 w-[65%]"
           type="text"
           placeholder="Enter your role"
           required
@@ -46,8 +46,9 @@ const Form = () => {
           }}
         />
         <input
+          className="border-emerald-700 border-2 text-xl font-semibold px-5 py-2 rounded m-2 w-[65%]"
           type="text"
-          placeholder="Enter your Description"
+          placeholder="Enter your description"
           required
           value={description}
           onChange={(e) => {
@@ -55,6 +56,7 @@ const Form = () => {
           }}
         />
         <input
+          className="border-emerald-700 border-2 text-xl font-semibold px-5 py-2 rounded m-2 w-[65%]"
           type="text"
           placeholder="Paste image url"
           required
@@ -63,13 +65,10 @@ const Form = () => {
             setImageUrl(e.target.value);
           }}
         />
-        <button>Submit</button>
+        <button className="px-5 py-2 text-xl active:scale-95 cursor-pointer bg-emerald-600 rounded">
+          Submit
+        </button>
       </form>
-      <div>
-        {allUser.map(function(e,idx){
-          return <Card key={idx} name={e.name} role={e.role} description={e.description} image={e.imageUrl}/>
-        })}
-      </div>
     </div>
   );
 };
