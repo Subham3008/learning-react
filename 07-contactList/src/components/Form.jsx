@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-const Form = ({ allUser, setAllUser }) => {
+const Form = ({ allUser, setAllUser}) => {
   const [name, setName] = useState("");
   const [role, setRole] = useState("");
   const [description, setDescription] = useState("");
@@ -12,6 +12,8 @@ const Form = ({ allUser, setAllUser }) => {
     newUser.push({ name, role, description, imageUrl });
     setAllUser(newUser);
     // setAllUser([...allUser, { name, role, description, imageUrl }]);
+    localStorage.setItem('all-user', JSON.stringify(newUser))
+
     setName("");
     setDescription("");
     setRole("");

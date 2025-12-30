@@ -3,12 +3,14 @@ import Form from "./components/Form";
 import Card from "./components/Card";
 
 const App = () => {
-  const [allUser, setAllUser] = useState([]);
+  const localData = JSON.parse(localStorage.getItem("all-user")) || [];
+  const [allUser, setAllUser] = useState(localData);
 
   const deleteHandler = (idx) => {
     const copyUser = [...allUser];
     copyUser.splice(idx, 1);
     setAllUser(copyUser);
+    localStorage.setItem("all-user", JSON.stringify(copyUser));
   };
 
   return (

@@ -11,7 +11,7 @@ const Card = (props) => {
       <div className="bg-white h-25 w-25 rounded-full p-1.5 absolute top-15 left-18  shadow-xl/40">
         <img
           className="w-full h-full object-cover rounded-full"
-          src={props.elem.image}
+          src={props.elem.imageUrl}
           alt="Image"
         />
       </div>
