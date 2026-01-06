@@ -1,0 +1,29 @@
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,body{
+  height: 100%;
+  width: 100%;
+}
+
+.navbar{
+  display: flex;
+  background-color: aquamarine;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 20px;
+}
+
+.right{
+  display: flex;
+  gap: 2rem;
+  font-size: 1.5rem;
+}
+
+.right a{
+  text-decoration: none;
+  color: black;
+}
