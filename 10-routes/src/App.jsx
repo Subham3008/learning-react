@@ -21,7 +21,10 @@ const App = () => {
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/product" element={<Product />} />
-        <Route path="/courses" element={<Courses />} />
+        <Route path="/courses" element={<Courses />}>
+          <Route path="/courses/kodex" element={<Kodex />} />
+          <Route path="/courses/coder" element={<Coder />} />
+        </Route>
 
         {/* Dynamic Route */}
         <Route path="/about/:id" element={<AboutSomthing />} />
@@ -31,8 +34,8 @@ const App = () => {
         <Route path="/*" element={<NotFound />} />
 
         {/* Nested Route */}
-        <Route path="/courses/kodex" element={<Kodex />} />
-        <Route path="/courses/coder" element={<Coder />} />
+        {/* <Route path="/courses/kodex" element={<Kodex />} />
+        <Route path="/courses/coder" element={<Coder />} /> */}
       </Routes>
     </div>
   );
