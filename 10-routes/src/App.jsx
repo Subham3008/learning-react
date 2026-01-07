@@ -11,6 +11,7 @@ import AboutSomthing from "./pages/AboutSomthing";
 import Product from "./pages/Product";
 import AnyProduct from "./pages/AnyProduct";
 import NotFound from "./pages/NotFound";
+import Footer from "./components/Footer";
 
 const App = () => {
   return (
@@ -37,6 +38,8 @@ const App = () => {
         {/* <Route path="/courses/kodex" element={<Kodex />} />
         <Route path="/courses/coder" element={<Coder />} /> */}
       </Routes>
+
+      <Footer />
     </div>
   );
 };
