@@ -4,9 +4,10 @@ import { useNavigate } from "react-router-dom";
 const Home = () => {
   const navigate = useNavigate();
   return (
-    <div>
+    <div className="home">
       <h1>THIS IS HOME PAGE</h1>
       <button
+        className="homeBtn"
         onClick={() => {
           navigate("/product");
         }}
