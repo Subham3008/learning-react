@@ -4,7 +4,6 @@ import { Link } from "react-router-dom";
 
 const Products = () => {
   const AllProduct = useContext(ProductDataContext);
-  console.log(AllProduct);
   return (
     <div>
       <h1>PRODUCTS PAGE</h1>

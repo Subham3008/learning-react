@@ -1,21 +1,18 @@
 import { createContext, useEffect } from "react";
 import { useState } from "react";
-import axios from "axios";
+import { getData } from "../api/api";
 
 export const ProductDataContext = createContext();
 const ProductData = (props) => {
   const [product, setProduct] = useState([]);
 
   /*API CALL*/
-  const getData = async () => {
-    const response = await axios.get(
-      "https://api.escuelajs.co/api/v1/products"
-    );
-    setProduct(response.data);
+  const setData = async () => {
+    setProduct(await getData());
   };
 
   useEffect(() => {
-    getData();
+    setData();
   }, []);
 
   return (
