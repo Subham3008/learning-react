@@ -6,7 +6,7 @@ app.use(express.json())
 
 /*-post method */
 
-app.post('/notes', async (req, res) => {
+app.post('/api/notes', async (req, res) => {
   const { title, description } = req.body
   const note = await noteModel.create({
     title, description
@@ -19,10 +19,8 @@ app.post('/notes', async (req, res) => {
 })
 
 /*-get method */
-app.get("/notes", async (req, res) => {
-  const note = await noteModel.find({
-    title, description
-  })
+app.get("/api/notes", async (req, res) => {
+  const note = await noteModel.find()
 
   res.status(200).json({
     messaage: "note fatched successfully",
@@ -31,7 +29,7 @@ app.get("/notes", async (req, res) => {
 })
 
 /*-Delete method */
-app.delete("/notes/:id", async (req, res) => {
+app.delete("/api/notes/:id", async (req, res) => {
   const id = req.params.id
   await noteModel.findByIdAndDelete(id)
 
@@ -41,10 +39,10 @@ app.delete("/notes/:id", async (req, res) => {
 })
 
 /*-patch method */
-app.patch("/notes/:id", (req, res) => {
+app.patch("/api/notes/:id", async (req, res) => {
   const id = req.params.id
   const { description } = req.body
-  noteModel.findByIdAndUpdate(id, { description })
+  await noteModel.findByIdAndUpdate(id, { description })
   res.status(200).json({
     messaage: "Note updated successfully"
   })
