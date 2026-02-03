@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 
 const App = () => {
@@ -21,15 +21,20 @@ const App = () => {
     // },
   ]);
 
-  axios.get("http://localhost:3000/api/notes").then((res) => {
-    setNotes(res.data.note);
-    // console.log(res.data);
-  });
+  function fetchData() {
+    axios.get("http://localhost:3000/api/notes").then((res) => {
+      setNotes(res.data.note);
+    });
+  }
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   return (
     <>
       <div className="notes">
-        {notes.map((note,idx) => {
+        {notes.map((note, idx) => {
           return (
             <div className="note" key={idx}>
               <h1>{note.title}</h1>
