@@ -18,13 +18,13 @@ body {
 main {
   height: 100%;
   width: 100%;
+  padding: 1rem;
 }
 
 .notes {
   display: flex;
   gap: 1rem;
   flex-wrap: wrap;
-  padding: 1rem;
 }
 
 .note {
@@ -34,4 +34,11 @@ main {
   background-color: #1b1a1a;
   padding: 1rem;
   border-radius: 1rem;
+}
+
+.note-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding-block: 1rem;
 }
