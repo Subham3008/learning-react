@@ -3,7 +3,12 @@ import axios from "axios";
 
 const App = () => {
   const [notes, setNotes] = useState([]);
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [isEditing, setIsEditing] = useState(false);
+  const [noteId, setNoteId] = useState(null);
 
+  /*-Fetched data backend to frontend */
   function fetchData() {
     axios.get("http://localhost:3000/api/notes").then((res) => {
       setNotes(res.data.notes);
@@ -15,19 +20,30 @@ const App = () => {
   function submitHandler(e) {
     e.preventDefault();
 
-    const title = e.target.title.value;
-    const description = e.target.description.value;
-    e.target.reset();
-
-    axios
-      .post("http://localhost:3000/api/notes", {
-        title: title,
-        description: description,
-      })
-      .then((res) => {
-        console.log(res.data);
-        fetchData();
-      });
+    if (isEditing) {
+      axios
+        .patch(`http://localhost:3000/api/notes/${noteId}`, {
+          description,
+        })
+        .then(() => {
+          fetchData();
+          setIsEditing(false);
+          setNoteId(null);
+          setTitle("");
+          setDescription("");
+        });
+    } else {
+      axios
+        .post("http://localhost:3000/api/notes", {
+          title,
+          description,
+        })
+        .then(() => {
+          fetchData();
+          setTitle("");
+          setDescription("");
+        });
+    }
   }
 
   /*-deleteHandler */
@@ -46,13 +62,25 @@ const App = () => {
     <>
       <main>
         <form className="note-form" onSubmit={submitHandler}>
-          <input name="title" type="text" placeholder="Enter Title" />
+          <input
+            name="title"
+            type="text"
+            placeholder="Enter Title"
+            value={title}
+            onChange={(e) => {
+              setTitle(e.target.value);
+            }}
+          />
           <input
             name="description"
             type="text"
             placeholder="Enter Description"
+            value={description}
+            onChange={(e) => {
+              setDescription(e.target.value);
+            }}
           />
-          <button>Create note</button>
+          <button>Add note</button>
         </form>
         <div className="notes">
           {notes.map((note) => {
@@ -60,13 +88,27 @@ const App = () => {
               <div className="note" key={note._id}>
                 <h1>{note.title}</h1>
                 <p>{note.description}</p>
-                <button
-                  onClick={() => {
-                    deleteHandler(note._id);
-                  }}
-                >
-                  Delete
-                </button>
+                <div className="btn-container">
+                  <button
+                    id="updateBtn"
+                    onClick={() => {
+                      setTitle(note.title);
+                      setDescription(note.description);
+                      setIsEditing(true);
+                      setNoteId(note._id);
+                    }}
+                  >
+                    Update
+                  </button>
+                  <button
+                    id="deleteBtn"
+                    onClick={() => {
+                      deleteHandler(note._id);
+                    }}
+                  >
+                    Delete
+                  </button>
+                </div>
               </div>
             );
           })}

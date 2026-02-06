@@ -42,3 +42,29 @@ main {
   gap: 1rem;
   padding-block: 1rem;
 }
+
+.btn-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+#deleteBtn {
+  background-color: red;
+  color: white;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem 0.7rem;
+  align-self: center;
+  border-radius: 0.5rem;
+}
+
+#updateBtn {
+  background-color: rgb(126, 46, 46);
+  color: white;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem 0.7rem;
+  align-self: center;
+  border-radius: 0.5rem;
+}
