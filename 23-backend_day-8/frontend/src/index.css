@@ -49,6 +49,16 @@ main {
   justify-content: space-between;
 }
 
+#addBtn {
+  background-color: rgb(26, 171, 23);
+  color: white;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem 0.7rem;
+  align-self: center;
+  border-radius: 0.5rem;
+}
+
 #deleteBtn {
   background-color: red;
   color: white;

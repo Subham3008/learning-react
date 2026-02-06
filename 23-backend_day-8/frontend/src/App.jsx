@@ -80,7 +80,7 @@ const App = () => {
               setDescription(e.target.value);
             }}
           />
-          <button>Add note</button>
+          <button id="addBtn">Add note</button>
         </form>
         <div className="notes">
           {notes.map((note) => {
