@@ -10,10 +10,12 @@ const App = () => {
 
   /*-Fetched data backend to frontend */
   function fetchData() {
-    axios.get("http://localhost:3000/api/notes").then((res) => {
-      setNotes(res.data.notes);
-      // console.log(res.data);
-    });
+    axios
+      .get("https://learning-react-1-6wsq.onrender.com/api/notes")
+      .then((res) => {
+        setNotes(res.data.notes);
+        // console.log(res.data);
+      });
   }
 
   /*-submitHandler */
@@ -22,9 +24,12 @@ const App = () => {
 
     if (isEditing) {
       axios
-        .patch(`http://localhost:3000/api/notes/${noteId}`, {
-          description,
-        })
+        .patch(
+          `https://learning-react-1-6wsq.onrender.com/api/notes/${noteId}`,
+          {
+            description,
+          },
+        )
         .then(() => {
           fetchData();
           setIsEditing(false);
@@ -34,7 +39,7 @@ const App = () => {
         });
     } else {
       axios
-        .post("http://localhost:3000/api/notes", {
+        .post("https://learning-react-1-6wsq.onrender.com/api/notes", {
           title,
           description,
         })
