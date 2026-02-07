@@ -53,10 +53,14 @@ const App = () => {
 
   /*-deleteHandler */
   function deleteHandler(deleteId) {
-    axios.delete(`http://localhost:3000/api/notes/${deleteId}`).then((res) => {
-      console.log(res.data);
-      fetchData();
-    });
+    axios
+      .delete(
+        `https://learning-react-1-6wsq.onrender.com/api/notes/${deleteId}`,
+      )
+      .then((res) => {
+        console.log(res.data);
+        fetchData();
+      });
   }
 
   useEffect(() => {
