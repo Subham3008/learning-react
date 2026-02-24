@@ -27,7 +27,7 @@ async function followUserController(req, res) {
   }
 
   if (isAlreadyFollowing) {
-    return res.status(200).json({
+    return res.status(409).json({ //update 200 to 409
       message: `You are already following ${followeeUsername}`,
       follow: isAlreadyFollowing
     })
@@ -44,6 +44,53 @@ async function followUserController(req, res) {
   })
 }
 
+async function acceptFollowRequestController(req, res) {
+  const currentUsername = req.user.username
+  const requesterUsername = req.params.username
+
+  const followRequest = await followeModel.findOne({
+    follower: requesterUsername,
+    followee: currentUsername,
+    status: "pending"
+  })
+
+  if (!followRequest) {
+    return res.status(404).json({
+      message: "No pending follow request found"
+    })
+  }
+
+  followRequest.status = "accepted"
+  await followRequest.save()
+
+  res.status(200).json({
+    message: `${requesterUsername} is now following you`,
+    follow: followRequest
+  })
+}
+
+async function rejectFollowRequestController(req, res) {
+  const currentUser = req.user.username
+  const requesterUsername = req.params.username
+
+  const followRequest = await followeModel.findOneAndDelete({
+    follower: requesterUsername,
+    followee: currentUser,
+    status: "pending"
+  })
+
+  if (!followRequest) {
+    return res.status(404).json({
+      message: "No pending follow request found"
+    })
+  }
+
+  res.status(200).json({
+    message: "Follow request rejected"
+  })
+}
+
+
 async function unfollowUserController(req, res) {
   const followUsername = req.user.username
   const followeeUsername = req.params.username
@@ -53,7 +100,7 @@ async function unfollowUserController(req, res) {
     followee: followeeUsername
   })
 
-  if(!isUserFollowing){
+  if (!isUserFollowing) {
     return res.status(200).json({
       message: `You are not following ${followeeUsername}`
     })
@@ -62,11 +109,13 @@ async function unfollowUserController(req, res) {
   await followeModel.findByIdAndDelete(isUserFollowing._id)
 
   res.status(200).json({
-    message:`You have unfollowed ${followeeUsername}`
+    message: `You have unfollowed ${followeeUsername}`
   })
 }
 
 module.exports = {
   followUserController,
-  unfollowUserController
+  unfollowUserController,
+  acceptFollowRequestController,
+  rejectFollowRequestController
 }

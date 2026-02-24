@@ -1,6 +1,6 @@
 const express = require('express')
 const identifyerUser = require('../middleware/auth.middleware')
-const  userController = require('../controllers/user.controller')
+const userController = require('../controllers/user.controller')
 
 const userRouter = express.Router()
 
@@ -9,7 +9,21 @@ const userRouter = express.Router()
  * @description follow a user
  * @access Private
  */
-userRouter.post('/follow/:username',identifyerUser, userController.followUserController)
+userRouter.post('/follow/:username', identifyerUser, userController.followUserController)
+
+/**
+ * @route POST /api/users/follow/accept/:userId
+ * @description accept user follow request
+ * @access Private
+ */
+userRouter.post('/follow/accept/:username', identifyerUser, userController.acceptFollowRequestController)
+
+/**
+ * @route POST /api/users/follow/reject/:userId
+ * @description reject user follow request
+ * @access Private
+ */
+userRouter.post('/follow/reject/:username', identifyerUser, userController.rejectFollowRequestController)
 
 /**
  * @route POST /api/users/unfollow/:userId
