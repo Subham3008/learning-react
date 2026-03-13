@@ -1,28 +1,27 @@
 import React from "react";
 
-const Pokemon1 = () => {
+const Pokemon1 = ({pokemon}) => {
   return (
     <div>
       <div className="card">
         <div className="img">
           <img
-            src="https://i.pinimg.com/1200x/84/05/c0/8405c0801b19582f7fdaf274c3d3610f.jpg"
-            alt=""
+            src={pokemon.image}
+            alt="img"
           />
         </div>
         <div className="details">
           <h3>
-            Name: <span>Pikachu</span>
+            Name: <span>{pokemon.name}</span>
           </h3>
           <p>
-            It has a flame on its tail. The flame burns brighter when it is
-            excited.
+            {pokemon.description}
           </p>
           <h3>
-            Type: <span>Electric</span>
+            Type: <span>{pokemon.type}</span>
           </h3>
           <h3>
-            Ability: <span>Static</span>
+            Ability: <span>{pokemon.ability}</span>
           </h3>
           <button className="btns">Add +</button>
         </div>
