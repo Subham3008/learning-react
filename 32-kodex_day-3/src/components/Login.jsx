@@ -26,7 +26,7 @@ const Login = ({ setToggle }) => {
         />
       </div>
       <button className="bg-gray-800 py-2 rounded-lg text-white active:scale-[0.95] cursor-pointer">
-        Sign up
+        Sign in
       </button>
       <p className="flex justify-center text-gray-500 gap-1">
         <span> Don't have an account?</span>
