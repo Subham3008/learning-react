@@ -1,18 +1,33 @@
 import React from "react";
 import { useForm } from "react-hook-form";
+import { nanoid } from "nanoid";
 
-const UserForm = ({ setUsers }) => {
+const UserForm = ({ setUsers, setToggle, editUsers, setEditUsers, users }) => {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isValid },
     reset,
-  } = useForm();
+  } = useForm({ mode: "onChange", defaultValues: editUsers });
 
   let handleFormSubmit = (data) => {
-    setUsers((prev) => [...prev, data]);
+    if (editUsers) {
+      setUsers((prev) => {
+        let updatedUser = prev.map((val) => {
+          return val.id === editUsers.id ? { ...val, ...data } : val;
+        });
+        localStorage.setItem("users", JSON.stringify(updatedUser));
+        return updatedUser;
+      });
+      setEditUsers(null);
+    } else {
+      let userArr = [...users, { ...data, id: nanoid() }];
+      setUsers(userArr);
+      localStorage.setItem("users", JSON.stringify(userArr));
+    }
 
     reset();
+    setToggle(false);
   };
 
   return (
@@ -151,7 +166,10 @@ const UserForm = ({ setUsers }) => {
         {errors.role && <p className="text-red-700">{errors.role.message}</p>}
 
         {/* Button */}
-        <button className="bg-gray-800 py-2 rounded-lg text-white active:scale-[0.95] transition text-sm sm:text-base">
+        <button
+          disabled={!isValid}
+          className={` ${isValid ? "bg-gray-800 active:scale-[0.95] cursor-pointer" : "bg-gray-400 cursor-not-allowed"} py-2 rounded-lg text-white  transition text-sm sm:text-base`}
+        >
           ADD USER
         </button>
       </form>

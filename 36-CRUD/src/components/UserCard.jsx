@@ -1,6 +1,6 @@
 import React from "react";
 
-const UserCard = ({ user, handleDelete }) => {
+const UserCard = ({ user, handleDelete, setEditUsers, setToggle }) => {
   return (
     <div className="w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-sm xl:max-w-xs flex flex-col p-5 bg-gray-600 gap-4 rounded-2xl shadow-lg hover:shadow-xl transition">
       {/* Image */}
@@ -40,11 +40,17 @@ const UserCard = ({ user, handleDelete }) => {
 
       {/* Buttons */}
       <div className="flex flex-col sm:flex-row gap-2 mt-3">
-        <button className="w-full cursor-pointer border-2 border-blue-600 text-white py-2 rounded-xl active:scale-[0.95] hover:text-blue-500 hover:bg-gray-300 transition">
+        <button
+          onClick={() => {
+            setEditUsers(user);
+            setToggle(true);
+          }}
+          className="w-full cursor-pointer border-2 border-blue-600 text-white py-2 rounded-xl active:scale-[0.95] hover:text-blue-500 hover:bg-gray-300 transition"
+        >
           Update
         </button>
         <button
-          onClick={() => handleDelete(user.empId)}
+          onClick={() => handleDelete(user.id)}
           className="w-full cursor-pointer border-2 border-red-600 text-white py-2 rounded-xl active:scale-[0.95] hover:text-red-600 hover:bg-gray-300 transition"
         >
           Remove
