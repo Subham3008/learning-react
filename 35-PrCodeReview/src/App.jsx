@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Navbar from "./components/Navbar";
 import UserForm from "./components/UserForm";
-import Post from "./components/Post";
+import Post from "./components/User";
 
 const App = () => {
   const [toggle, setToggle] = useState(true);

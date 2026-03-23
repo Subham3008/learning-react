@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 
 const UserForm = ({ setPostArr, updatePost, editPost, postArr }) => {
@@ -18,7 +18,7 @@ const UserForm = ({ setPostArr, updatePost, editPost, postArr }) => {
   let handleFormSubmit = (data) => {
     if (editPost !== null) {
       updatePost(data);
-      alert("Post updated successfully.")
+      alert("Post updated successfully.");
     } else {
       setPostArr((prev) => [...prev, data]);
     }

@@ -97,7 +97,8 @@ async function unfollowUserController(req, res) {
 
   const isUserFollowing = await followeModel.findOne({
     follower: followUsername,
-    followee: followeeUsername
+    followee: followeeUsername,
+    status: "accepted"
   })
 
   if (!isUserFollowing) {
