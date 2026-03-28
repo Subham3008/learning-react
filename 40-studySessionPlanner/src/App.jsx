@@ -16,7 +16,7 @@ const App = () => {
           </div>
 
           {/* List Section */}
-          <div className="bg-gray-900 w-full lg:w-[70%] h-[400px] sm:h-[500px] lg:h-[580px] rounded-xl px-4 pb-4 border overflow-y-scroll no-scrollbar">
+          <div className="bg-gray-900 w-full lg:w-[70%] h-100 sm:h-125 lg:h-145 rounded-xl px-4 pb-4 border overflow-y-scroll no-scrollbar">
             <SessionList />
           </div>
         </div>

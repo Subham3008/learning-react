@@ -23,11 +23,22 @@ const SessionForm = () => {
         onSubmit={handleSubmit(handleFormSubmit)}
         className="w-full max-w-md sm:max-w-lg bg-gray-700 gap-4 p-5 sm:p-6 rounded-xl border flex flex-col"
       >
-        {/* Topic */}
+        <h1></h1>
+        {/* Topic Name */}
         <div className="flex flex-col gap-2">
           <label className="text-sm sm:text-base">Topic Name</label>
           <input
-            {...register("topicName", { required: "Topic Name is required!" })}
+            {...register("topicName", {
+              required: "Topic Name is required!",
+              minLength: {
+                value: 3,
+                message: "Minimum 3 characters required!",
+              },
+              maxLength: {
+                value: 20,
+                message: "Maximum 20 characters allowed!",
+              },
+            })}
             className="border border-gray-300 focus:ring-2 focus:ring-gray-400 outline-none rounded-lg px-3 py-2 bg-gray-500 text-gray-800 text-sm sm:text-base"
             type="text"
             placeholder="Topic Name"
@@ -62,9 +73,13 @@ const SessionForm = () => {
           <input
             {...register("studyDuration", {
               required: "Study Duration is required!",
-              min: {
+              minLength: {
                 value: 2,
                 message: "Minimum 10 minutes required!",
+              },
+              maxLength: {
+                value: 3,
+                message: "Maximum 999 minutes required!",
               },
             })}
             className="border border-gray-300 focus:ring-2 focus:ring-gray-400 outline-none rounded-lg px-3 py-2 bg-gray-500 text-gray-800 text-sm sm:text-base"

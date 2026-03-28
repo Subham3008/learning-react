@@ -14,7 +14,7 @@ const SessionCard = ({ session, deleteSession }) => {
       </div>
       <div className="flex flex-col gap-2 items-center">
         <h2
-          className={`${priorityColor(session.priority)} px-2 py-0.5 rounded-sm`}
+          className={`${priorityColor(session.priority)} px-2 py-0.5 rounded-2xl border`}
         >
           {session.priority}
         </h2>
