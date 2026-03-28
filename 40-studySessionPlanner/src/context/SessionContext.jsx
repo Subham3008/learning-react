@@ -10,7 +10,10 @@ export const ContextProvider = ({ children }) => {
 
   /*--Add Session--*/
   let addSession = (data) => {
-    let allSessions = [...sessions, { ...data, id: nanoid() }];
+    let allSessions = [
+      ...sessions,
+      { ...data, id: nanoid(), completed: false },
+    ];
     setSessions(allSessions);
     localStorage.setItem("allSessions", JSON.stringify(allSessions));
   };
@@ -24,9 +27,35 @@ export const ContextProvider = ({ children }) => {
     localStorage.setItem("allSessions", JSON.stringify(updatedSession));
   };
 
+  /*--Completed features-- */
+  let toggleComplete = (id) => {
+    let updatedSession = sessions.map((session) => {
+      if (session.id === id) {
+        return { ...session, completed: !session.completed };
+      }
+      return session;
+    });
+    setSessions(updatedSession);
+    localStorage.setItem("allSessions", JSON.stringify(updatedSession));
+  };
+
+  /*--Total study duration-- */
+  const totalStudyDuration = sessions
+    .filter((session) => !session.completed)
+    .reduce((acc, curr) => {
+      return acc + Number(curr.studyDuration);
+    }, 0);
+
   return (
     <MyContext.Provider
-      value={{ setSessions, sessions, deleteSession, addSession }}
+      value={{
+        setSessions,
+        sessions,
+        deleteSession,
+        addSession,
+        toggleComplete,
+        totalStudyDuration,
+      }}
     >
       {children}
     </MyContext.Provider>
