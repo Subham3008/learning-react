@@ -23,7 +23,7 @@ const SessionForm = () => {
         onSubmit={handleSubmit(handleFormSubmit)}
         className="w-full max-w-md sm:max-w-lg bg-gray-700 gap-4 p-5 sm:p-6 rounded-xl border flex flex-col"
       >
-        <h1></h1>
+        <h1 className="text-center font-bold text-xl">Study Session Planner</h1>
         {/* Topic Name */}
         <div className="flex flex-col gap-2">
           <label className="text-sm sm:text-base">Topic Name</label>
