@@ -14,7 +14,8 @@ const SessionList = () => {
         </h1>
 
         <div className="bg-gray-800 border px-4 py-2 rounded-xl text-sm sm:text-base">
-          Total Duration: <span className="font-semibold">{totalStudyDuration}</span> min
+          Total Duration:{" "}
+          <span className="font-semibold">{totalStudyDuration}</span> min
         </div>
       </div>
 
@@ -28,7 +29,7 @@ const SessionList = () => {
           <p className="text-sm">Start by adding one from the form</p>
         </div>
       ) : (
-        <div className="flex flex-col gap-4 overflow-y-auto pr-2">
+        <div className="flex flex-col gap-4 pr-2 overflow-y-scroll no-scrollbar">
           {sessions.map((session) => (
             <SessionCard key={session.id} session={session} />
           ))}
