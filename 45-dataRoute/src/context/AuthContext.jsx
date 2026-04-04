@@ -3,10 +3,11 @@ import { createContext, useState } from "react";
 export const Auth = createContext();
 
 export const AuthProvider = ({ children }) => {
+  
   const [regUser, setRegUser] = useState(
     JSON.parse(localStorage.getItem("reg users")) || [],
   );
-  const [loggedUser, setLoggedUser] = useState(null);
+  const [loggedUser, setLoggedUser] = useState( JSON.parse(localStorage.getItem("logged user")) || []);
 
   return (
     <Auth.Provider value={{ regUser, setRegUser, loggedUser, setLoggedUser }}>

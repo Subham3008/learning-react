@@ -1,6 +1,6 @@
-import React, { useContext } from "react";
+import { useContext } from "react";
 import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router";
+import { Navigate, useNavigate } from "react-router";
 import { Auth } from "../context/AuthContext";
 import { toast } from "react-toastify";
 
@@ -28,6 +28,7 @@ const Login = () => {
       return;
     }
     setLoggedUser(user);
+    navigate("/dashboard")
     localStorage.setItem("logged user", JSON.stringify(user));
     toast.success("User logged in successfully.");
     reset();
@@ -97,7 +98,7 @@ const Login = () => {
     }
   `}
           >
-            Register
+            Log In
           </button>
         </form>
 
