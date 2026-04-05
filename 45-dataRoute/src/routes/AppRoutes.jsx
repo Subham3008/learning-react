@@ -11,7 +11,6 @@ import AuthProtectedRoutes from "./AuthProtectedRoutes";
 import { getAllProducts } from "../api/productApi";
 import ProductDetails from "../pages/productDetails";
 
-
 const AppRoutes = () => {
   const route = createBrowserRouter([
     // 🔹 Root redirect
@@ -61,7 +60,8 @@ const AppRoutes = () => {
           element: <MainLayout />,
           children: [
             {
-              index: true,
+              // index: true,
+              path: "",
               loader: async () => {
                 return await getAllProducts();
               },

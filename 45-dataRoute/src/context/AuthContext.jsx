@@ -8,20 +8,23 @@ export const AuthProvider = ({ children }) => {
   );
   const [loggedUser, setLoggedUser] = useState(null);
 
-  // 🔹 sync from localStorage on app start
+  const [loading, setLoading] = useState(true);
+
+  // 🔹 sync from localStorage on app start & manage setLoading state
   useEffect(() => {
-    try {
-      const data = localStorage.getItem("logged user");
-      if (data) {
-        setLoggedUser(JSON.parse(data));
-      }
-    } catch {
-      setLoggedUser(null);
+    const data = localStorage.getItem("logged user");
+    if (data) {
+      setLoggedUser(JSON.parse(data));
     }
+    setLoading(false); // ✅ important
   }, []);
 
+  // 🔹 sync from localStorage on app start
+
   return (
-    <Auth.Provider value={{ regUser, setRegUser, loggedUser, setLoggedUser }}>
+    <Auth.Provider
+      value={{ regUser, setRegUser, loggedUser, setLoggedUser, loading }}
+    >
       {children}
     </Auth.Provider>
   );

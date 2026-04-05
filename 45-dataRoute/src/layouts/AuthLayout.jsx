@@ -5,7 +5,6 @@ const AuthLayout = () => {
   return (
     <div>
       <Outlet />
-      AuthLayout
     </div>
   );
 };
