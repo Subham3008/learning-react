@@ -7,26 +7,29 @@ import Home from "../pages/Home";
 import { useEffect } from "react";
 import axios from "axios";
 import { useDispatch } from "react-redux";
-import { addUser } from "../features/AppSlice";
+import { loginUser } from "../features/actions/authAction";
+import { removeUser } from "../features/AppSlice";
 
 const AppRoutes = () => {
   const dispatch = useDispatch();
   const token = localStorage.getItem("accessToken");
+
   useEffect(() => {
-    if (token) {
-      (async () => {
+    if (!token) {
+      dispatch(removeUser());
+    }
+    (async () => {
+      try {
         const res = await axios.get(`https://dummyjson.com/auth/me`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
-        dispatch(addUser(res.data));
-        try {
-        } catch (err) {
-          console.log("Error from accessToken api", err);
-        }
-      })();
-    }
+        dispatch(loginUser(res.data));
+      } catch (err) {
+        console.log("Error from accessToken api", err);
+      }
+    })();
   }, []);
 
   const router = createBrowserRouter([

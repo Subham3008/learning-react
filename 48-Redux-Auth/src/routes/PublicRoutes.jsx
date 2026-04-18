@@ -3,11 +3,11 @@ import { useSelector } from "react-redux";
 import { Navigate, Outlet } from "react-router";
 
 const PublicRoutes = () => {
-  const { isAuthenticate } = useSelector((store) => store.auth);
+  const { isAuthenticate, isLoading } = useSelector((store) => store.auth);
 
-  // if (isLoading) {
-  //   return <h1>Loading...</h1>;
-  // }
+  if (isLoading) {
+    return <h1>Loading...</h1>;
+  }
 
   if (isAuthenticate) {
     return <Navigate to={"/main"} />;

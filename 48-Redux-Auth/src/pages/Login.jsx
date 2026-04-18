@@ -1,9 +1,7 @@
 import React from "react";
 import { useForm } from "react-hook-form";
-import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
-import { addUser } from "../features/AppSlice";
-import { store } from "../app/Store";
+import { loginUser } from "../features/actions/authAction";
 
 const Login = () => {
   const {
@@ -13,13 +11,10 @@ const Login = () => {
     formState: { errors, isValid },
   } = useForm();
   const dispatch = useDispatch();
-  
+
   const onSubmit = async (data) => {
     try {
-      const res = await axios.post("https://dummyjson.com/auth/login", data);
-      console.log(res.data);
-      dispatch(addUser(res.data));
-      localStorage.setItem("accessToken", res.data.accessToken);
+      dispatch(loginUser(data));
     } catch (err) {
       console.log("Error from login Api", err);
     }
