@@ -6,5 +6,4 @@ connectDb()
 
 app.listen(process.env.port, () => {
   console.log(`Server is starting on port ${process.env.port}`);
-
 })
