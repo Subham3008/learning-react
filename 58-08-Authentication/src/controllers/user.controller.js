@@ -2,7 +2,7 @@ const userModel = require("../models/user.model");
 let bcrypt = require("bcrypt")
 let jwt = require("jsonwebtoken")
 
-
+//register controll
 const registerController = async (req, res) => {
   try {
     //Authentication--------------->>
@@ -51,6 +51,56 @@ const registerController = async (req, res) => {
   }
 }
 
+//login controller
+
+const loginController = async (req, res) => {
+  try {
+    let { email, password } = req.body
+
+    if (!email || !password) {
+      return res.status(400).json({
+        message: "All fields are required."
+      })
+    }
+
+    let isExists = await userModel.findOne({
+      email
+    })
+
+    if (!isExists) {
+      return res.status(404).json({
+        message: "User not found"
+      })
+    }
+
+    let comparePass = await bcrypt.compare(password, isExists.password)
+
+    if (!comparePass) {
+      return res.status(401).json({
+        message: "Invalid credential"
+      })
+    }
+
+    let token = jwt.sign({ id: isExists._id }, process.env.JWT_SECRET, { expiresIn: "1h" })
+
+    res.cookie("token", token)
+
+    return res.status(200).json({
+      message: "User logged In successfully.",
+      user: isExists
+    })
+
+  } catch (err) {
+    console.log("Error from backend Api:", err);
+
+    return res.status(500).json({
+      message: "Internal server error"
+    })
+
+  }
+}
+
 module.exports = {
-  registerController
+  registerController,
+  loginController,
 }
