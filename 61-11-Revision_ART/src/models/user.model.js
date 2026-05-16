@@ -33,10 +33,10 @@ const userSchema = mongoose.Schema(
 )
 
 //password hashing
-userSchema.pre("save", function(){
-  if(!this.isModified('password')) return
-  this.password = bcrypt.hashSync(this.password, 10)
-})
+// userSchema.pre("save", function(){
+//   if(!this.isModified('password')) return
+//   this.password = bcrypt.hashSync(this.password, 10)
+// })
 
 const userModel = mongoose.model("user", userSchema)
 
