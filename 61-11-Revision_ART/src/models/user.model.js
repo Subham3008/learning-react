@@ -18,11 +18,6 @@ const userSchema = mongoose.Schema(
       trim: true,
       required: [true, "Password is reuired."]
     },
-    mobile: {
-      type: String,
-      trim: true,
-      required: [true, "Mobile No. is reuired."]
-    },
     refreshToken: {
       type: String
     },
@@ -31,12 +26,6 @@ const userSchema = mongoose.Schema(
     timestamps: true
   }
 )
-
-//password hashing
-// userSchema.pre("save", function(){
-//   if(!this.isModified('password')) return
-//   this.password = bcrypt.hashSync(this.password, 10)
-// })
 
 const userModel = mongoose.model("user", userSchema)
 
