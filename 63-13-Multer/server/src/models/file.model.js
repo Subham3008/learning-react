@@ -14,6 +14,24 @@ const fileSchema = mongoose.Schema(
   }
 )
 
-const fileModel = mongoose.model("files", fileSchema)
+const filesSchema = mongoose.Schema(
+  {
+    images: [{
+      type: String,
+      required: true,
+    }],
 
-module.Schema = fileModel
+    name: String,
+  },
+  {
+    timestamps: true
+  }
+)
+
+const fileModel = mongoose.model("files", fileSchema)
+const filesModel = mongoose.model("multi-files", filesSchema)
+
+module.exports = {
+  fileModel,
+  filesModel,
+}
