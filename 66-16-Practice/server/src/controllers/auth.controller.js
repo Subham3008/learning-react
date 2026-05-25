@@ -113,8 +113,36 @@ const getMeController = async (req, res) => {
   })
 }
 
+const googleCallbackController = async (req, res) => {
+  const user = req.user;
+
+  const accessToken = await generateAccessToken(user._id)
+  const refreshToken = await generateRefreshToken(user._id)
+
+  await userModel.findByIdAndUpdate(user._id, {
+    refreshTokenHash:await hashedPassword(refreshToken)
+  })
+
+
+  res.cookie("accessToken", accessToken, {
+    httpOnly: true,
+    maxAge: 15 * 60 * 1000,
+  })
+
+  res.cookie("refreshToken", refreshToken, {
+    httpOnly: true,
+    maxAge: 24 * 60 * 60 * 1000,
+  })
+
+  return res.status(201).json({
+    message: "User created successfully."
+  })
+
+}
+
 module.exports = {
   registerController,
   loginController,
-  getMeController
+  getMeController,
+  googleCallbackController,
 }
