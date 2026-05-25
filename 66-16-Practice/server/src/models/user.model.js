@@ -31,7 +31,7 @@ const userSchema = new mongoose.Schema(
 
     avatar: {
       type: String,
-      default: "",
+      default: "https://ik.imagekit.io/0qdaekejbq/default-avatar-profile-icon-vector-social-media-user-image-182145777.webp?updatedAt=1771008705345",
     },
 
     authProvider: {

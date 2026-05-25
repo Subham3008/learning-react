@@ -70,9 +70,6 @@ const loginController = async (req, res) => {
     throw new APiError(404, "User not found.")
   }
 
-  // console.log(password)
-  // console.log(isExisted.passwordHash)
-  // console.log(isExisted)
 
   let isCompared = await comparePassword(password, isExisted.passwordHash)
 
@@ -82,8 +79,6 @@ const loginController = async (req, res) => {
 
   let accessTK = await generateAccessToken(isExisted._id)
   let refreshTK = await generateRefreshToken(isExisted._id)
-  // console.log("refreshTK", refreshTK);
-  // return
 
 
   let hashedRefresh = await hashedPassword(refreshTK)
@@ -101,8 +96,8 @@ const loginController = async (req, res) => {
     maxAge: 24 * 60 * 60 * 1000,
   })
 
-  // pass
-  isExisted.passwordHash = undefined
+  // delete user.passwordHash
+  // delete user.refreshTokenHash
 
   return res.status(200).json({
     message: "User loggedIn successfully.",
@@ -110,7 +105,16 @@ const loginController = async (req, res) => {
   })
 }
 
+const getMeController = async (req, res) => {
+  return res.status(200).json({
+    success: true,
+    message: "Current user fetched successfully",
+    user: req.user
+  })
+}
+
 module.exports = {
   registerController,
   loginController,
+  getMeController
 }
