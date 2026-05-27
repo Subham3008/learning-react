@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Register</title>
+</head>
+
+<body style="font-family: Arial; background: #f3f4f6">
+  <div style="
+        max-width: 420px;
+        margin: 80px auto;
+        background: white;
+        padding: 28px;
+        border-radius: 14px;
+      ">
+    <h2>Create Account</h2>
+
+    <form action="/api/auth/register" method="POST">
+      <input type="text" name="name" placeholder="Enter your name" required
+        style="width: 100%; padding: 10px; margin-bottom: 10px" />
+
+      <input type="email" name="email" placeholder="Enter your email" required
+        style="width: 100%; padding: 10px; margin-bottom: 10px" />
+
+      <input type="password" name="password" placeholder="Enter your password" required
+        style="width: 100%; padding: 10px; margin-bottom: 10px" />
+
+      <button type="submit" style="width: 100%; padding: 12px">
+        Register
+      </button>
+    </form>
+
+    <p>
+      Forgot password?
+      <a href="/api/auth/forgotPasswordPage">reset password</a>
+    </p>
+  </div>
+</body>
+
+</html>
