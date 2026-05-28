@@ -1,4 +1,5 @@
 const userModel = require("../models/user.model")
+const sendMail = require("../services/mail.service")
 const APiError = require("../utils/apiError")
 const { hashedPassword, comparePassword } = require("../utils/hashedPassword")
 const { generateAccessToken, generateRefreshToken } = require("../utils/token")
@@ -39,6 +40,18 @@ const registerController = async (req, res) => {
 
   newUser.refreshTokenHash = hashedRefresh
   await newUser.save()
+
+  //send mail to the registered user
+  sendMail({
+    to: newUser.email,
+    subject: "Welcome to our app",
+    html: `
+    <h1>Welcome ${newUser.name}</h1>
+    <p>Your account has been created successfully.</p>
+  `
+  }).catch((err) => {
+    console.log("Mail Error:", err.message)
+  })
 
   res.cookie("accessToken", accessTK, {
     httpOnly: true,
@@ -116,11 +129,28 @@ const getMeController = async (req, res) => {
 const googleCallbackController = async (req, res) => {
   const user = req.user;
 
+  // send mail only for new users
+  if (user.isNewUser) {
+
+    sendMail({
+      to: user.email,
+      subject: "Welcome to our app",
+      html: `
+        <h1>Welcome ${user.name}</h1>
+        <p>Your account created successfully.</p>
+      `
+    }).catch((err) => {
+      console.log("Mail Error:", err.message)
+    })
+
+  }
+
+
   const accessToken = await generateAccessToken(user._id)
   const refreshToken = await generateRefreshToken(user._id)
 
   await userModel.findByIdAndUpdate(user._id, {
-    refreshTokenHash:await hashedPassword(refreshToken)
+    refreshTokenHash: await hashedPassword(refreshToken)
   })
 
 

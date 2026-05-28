@@ -14,7 +14,7 @@ passport.use(
 
     async (accessToken, refreshToken, profile, cb) => {
       try {
-        console.log("Profile-->", profile);
+        // console.log("Profile-->", profile);
         const googleId = profile.id;
         const name = profile.displayName;
         const email = profile.emails?.[0]?.value
@@ -44,6 +44,9 @@ passport.use(
               authProvider: "google",
               isEmailVerified: true,
             });
+
+            // important flag
+            user.isNewUser = true;
           }
         }
         return cb(null, user);
