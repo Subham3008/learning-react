@@ -7,18 +7,4 @@ let storageInstance = new Imagekit({
 
 })
 
-let sendFiles = async (file, fileName) => {
-  try {
-    let options = {
-      file,
-      fileName,
-      folder: "kodex",
-    }
-    return await storageInstance.upload(options)
-  } catch (err) {
-    console.log("Imagekit error", err);
-
-  }
-}
-
-module.exports = sendFiles
+module.exports = storageInstance

@@ -2,6 +2,7 @@ const userModel = require("../models/user.model")
 const Profile = require("../models/profile.model")
 const APiError = require("../utils/apiError")
 const mongoose = require("mongoose")
+const { uploadToImagekit } = require("../utils/imagekit.helper")
 
 //get current user profile
 const getCurrentUserProfileController = async (req, res) => {
@@ -41,6 +42,8 @@ const updateProfileController = async (req, res) => {
   if (location !== undefined) updateData.location = location;
   if (socialLinks !== undefined) updateData.socialLinks = socialLinks;
 
+
+  //skills->>
   if (skills !== undefined) {
     if (!Array.isArray(skills)) {
       throw new APiError(400, "Skill must be an array");
@@ -53,6 +56,7 @@ const updateProfileController = async (req, res) => {
     console.log("skills", Skills);
   }
 
+  //tech stack------->>
   if (techStack !== undefined) {
     if (!Array.isArray(techStack)) {
       throw new APiError(400, "techStack must be an array");
@@ -65,6 +69,41 @@ const updateProfileController = async (req, res) => {
     console.log("TechStack", TechStack);
   }
 
+  // profile picture upload
+  if (req.files?.profilePicture) {
+
+    const profilePictureFile = req.files.profilePicture[0];
+
+    const uploadedProfilePicture = await uploadToImagekit(
+      profilePictureFile,
+      profilePictureFile.originalname,
+      "/hack-sprint/profile-pictures"
+    );
+
+    updateData.profilePicture = {
+      url: uploadedProfilePicture.url,
+      fileId: uploadedProfilePicture.fileId,
+    };
+  }
+
+  // banner upload
+  if (req.files?.banner) {
+
+    const bannerFile = req.files.banner[0];
+
+    const uploadedBanner = await uploadToImagekit(
+      bannerFile,
+      bannerFile.originalname,
+      "/hack-sprint/banners"
+    );
+
+    updateData.banner = {
+      url: uploadedBanner.url,
+      fileId: uploadedBanner.fileId,
+    };
+  }
+
+  //update profile
   const profile = await Profile.findOneAndUpdate(
     { user: req.user._id },
     updateData,
@@ -148,10 +187,6 @@ const getSingleProfileController = async (req, res) => {
     profile,
   })
 
-}
-
-module.exports = {
-  getSingleProfileController
 }
 
 module.exports = {
