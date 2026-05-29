@@ -1,3 +1,4 @@
+const Profile = require("../models/profile.model")
 const userModel = require("../models/user.model")
 const sendMail = require("../services/mail.service")
 const APiError = require("../utils/apiError")
@@ -5,7 +6,7 @@ const { hashedPassword, comparePassword } = require("../utils/hashedPassword")
 const { generateAccessToken, generateRefreshToken } = require("../utils/token")
 
 
-
+//----------register controller---------->>
 const registerController = async (req, res) => {
 
   let { name, password, email } = req.body
@@ -31,6 +32,11 @@ const registerController = async (req, res) => {
     passwordHash: hashed,
     email,
     isEmailVerified: true,
+  })
+
+  //link profile with User
+  await Profile.create({
+    user: newUser._id
   })
 
   let accessTK = await generateAccessToken(newUser._id)
@@ -69,6 +75,7 @@ const registerController = async (req, res) => {
 
 }
 
+//---------------Login controller------------>>
 const loginController = async (req, res) => {
 
   let { password, email } = req.body
@@ -118,6 +125,7 @@ const loginController = async (req, res) => {
   })
 }
 
+//---------fetched user controller------------>>
 const getMeController = async (req, res) => {
   return res.status(200).json({
     success: true,
@@ -126,11 +134,16 @@ const getMeController = async (req, res) => {
   })
 }
 
+//--------google auth controller--------------->>
 const googleCallbackController = async (req, res) => {
   const user = req.user;
 
   // send mail only for new users
   if (user.isNewUser) {
+
+    await Profile.create({
+      user: user.id
+    })
 
     sendMail({
       to: user.email,
