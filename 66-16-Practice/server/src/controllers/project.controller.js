@@ -3,7 +3,7 @@ const projectModel = require("../models/project.model");
 const APiError = require("../utils/apiError");
 const { uploadToImagekit } = require("../utils/imagekit.helper");
 
-
+// create controller--------->>
 const createProjectController = async (req, res) => {
 
   const {
@@ -54,6 +54,46 @@ const createProjectController = async (req, res) => {
   });
 };
 
+
+//fetched My projects--------->>
+const getMyProjectsController = async (req, res) => {
+
+  const userId = req.user?._id;
+
+  if (!userId) {
+    throw new ApiError(401, "Unauthorized access");
+  }
+
+  const projects = await projectModel.find({ owner: userId }).sort({ createdAt: -1 })
+
+  return res.status(200).json({
+    success: true,
+    message: projects.length
+      ? "My projects fetched successfully"
+      : "No projects found",
+    count: projects.length,
+    data: projects,
+  });
+}
+
+//fetched all projects---------->>
+const getAllProjectsController = async (req, res) => {
+  const projects = await projectModel
+    .find()
+    .sort({ createdAt: -1 });
+
+  return res.status(200).json({
+    success: true,
+    message: projects.length
+      ? "Projects fetched successfully"
+      : "No projects found",
+    count: projects.length,
+    data: projects,
+  });
+};
+
 module.exports = {
   createProjectController,
+  getMyProjectsController,
+  getAllProjectsController,
 };
