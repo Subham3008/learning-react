@@ -1,7 +1,7 @@
-
 const projectModel = require("../models/project.model");
 const APiError = require("../utils/apiError");
 const { uploadToImagekit } = require("../utils/imagekit.helper");
+const mongoose = require("mongoose")
 
 // create controller--------->>
 const createProjectController = async (req, res) => {
@@ -92,8 +92,65 @@ const getAllProjectsController = async (req, res) => {
   });
 };
 
+//fetched single project by id---------->>
+const getSingleProjectController = async (req, res) => {
+  const { id } = req.params;
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    throw new ApiError(400, "Invalid project id");
+  }
+
+  const project = await projectModel.findByIdAndUpdate(
+    id,                     // Kaunsa document update karna hai
+    { $inc: { views: 1 } },   // Kya update karna hai  or $inc: iska matlab value increase karo
+    { new: true }              // Update ka behavior / update hone ke badd wale data ko dikhate ha
+  );
+
+  if (!project) {
+    throw new ApiError(404, "Project not found");
+  }
+
+  return res.status(200).json({
+    success: true,
+    message: "Project fetched successfully",
+    data: project,
+  });
+};
+
+//delete project by id------->>
+const deleteProjectController = async (req, res) => {
+  const { id } = req.params;
+  const userId = req.user._id;
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    throw new ApiError(400, "Invalid project id");
+  }
+
+  const project = await projectModel.findById(id);
+
+  if (!project) {
+    throw new ApiError(404, "Project not found");
+  }
+
+  if (project.owner.toString() !== userId.toString()) {
+    throw new ApiError(
+      403,
+      "You are not authorized to delete this project"
+    );
+  }
+
+  await project.deleteOne();
+
+  return res.status(200).json({
+    success: true,
+    message: "Project deleted successfully",
+  });
+};
+
 module.exports = {
   createProjectController,
   getMyProjectsController,
   getAllProjectsController,
+  getSingleProjectController,
+  deleteProjectController,
 };

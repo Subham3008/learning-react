@@ -1,6 +1,6 @@
 const express = require("express")
 const verifyJwt = require("../middleware/auth.middleware")
-const { createProjectController, getMyProjectsController, getAllProjectsController } = require("../controllers/project.controller")
+const { createProjectController, getMyProjectsController, getAllProjectsController, getSingleProjectController, deleteProjectController } = require("../controllers/project.controller")
 const upload = require("../middleware/multer.middleware")
 
 const router = express.Router()
@@ -13,5 +13,11 @@ router.get("/my-projects", verifyJwt, getMyProjectsController)
 
 //fetched All projects controller---------->>
 router.get("/", getAllProjectsController)
+
+//get single project by Id----------->>
+router.get("/:id", getSingleProjectController)
+
+//delete project by Id----------->>
+router.delete("/:id", verifyJwt, deleteProjectController)
 
 module.exports = router
