@@ -1,6 +1,6 @@
 const express = require("express")
 const verifyJwt = require("../middleware/auth.middleware")
-const { createProjectController, getMyProjectsController, getAllProjectsController, getSingleProjectController, deleteProjectController } = require("../controllers/project.controller")
+const { createProjectController, getMyProjectsController, getAllProjectsController, getSingleProjectController, deleteProjectController, updateProjectController } = require("../controllers/project.controller")
 const upload = require("../middleware/multer.middleware")
 
 const router = express.Router()
@@ -19,5 +19,13 @@ router.get("/:id", getSingleProjectController)
 
 //delete project by Id----------->>
 router.delete("/:id", verifyJwt, deleteProjectController)
+
+//update project---------------->>
+router.patch(
+  "/update/:id",
+  verifyJwt,
+  upload.single("thumbnail"),
+  updateProjectController
+)
 
 module.exports = router

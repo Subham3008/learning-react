@@ -1,3 +1,4 @@
+const storageInstance = require("../config/imagekit");
 const projectModel = require("../models/project.model");
 const APiError = require("../utils/apiError");
 const { uploadToImagekit } = require("../utils/imagekit.helper");
@@ -14,22 +15,30 @@ const createProjectController = async (req, res) => {
     liveLink,
   } = req.body;
 
-  if (!title) {
+  if (!title?.trim()) {
     throw new APiError(400, "Title is required");
   }
 
-  if (!description) {
+  if (!description?.trim()) {
     throw new APiError(400, "Description is required");
   }
 
   const projectData = {
     owner: req.user._id,
-    title,
-    description,
-    techStack,
+    title: title.trim(),
+    description: description.trim(),
     githubLink,
     liveLink,
   };
+
+  if (techStack) {
+    projectData.techStack = Array.isArray(techStack)
+      ? techStack
+      : techStack
+        .split(",")
+        .map((item) => item.trim())
+        .filter(Boolean)
+  }
 
   // Thumbnail Upload
   if (req.file) {
@@ -61,7 +70,7 @@ const getMyProjectsController = async (req, res) => {
   const userId = req.user?._id;
 
   if (!userId) {
-    throw new ApiError(401, "Unauthorized access");
+    throw new APiError(401, "Unauthorized access");
   }
 
   const projects = await projectModel.find({ owner: userId }).sort({ createdAt: -1 })
@@ -97,7 +106,7 @@ const getSingleProjectController = async (req, res) => {
   const { id } = req.params;
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
-    throw new ApiError(400, "Invalid project id");
+    throw new APiError(400, "Invalid project id");
   }
 
   const project = await projectModel.findByIdAndUpdate(
@@ -107,7 +116,7 @@ const getSingleProjectController = async (req, res) => {
   );
 
   if (!project) {
-    throw new ApiError(404, "Project not found");
+    throw new APiError(404, "Project not found");
   }
 
   return res.status(200).json({
@@ -123,17 +132,17 @@ const deleteProjectController = async (req, res) => {
   const userId = req.user._id;
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
-    throw new ApiError(400, "Invalid project id");
+    throw new APiError(400, "Invalid project id");
   }
 
   const project = await projectModel.findById(id);
 
   if (!project) {
-    throw new ApiError(404, "Project not found");
+    throw new APiError(404, "Project not found");
   }
 
   if (project.owner.toString() !== userId.toString()) {
-    throw new ApiError(
+    throw new APiError(
       403,
       "You are not authorized to delete this project"
     );
@@ -147,10 +156,83 @@ const deleteProjectController = async (req, res) => {
   });
 };
 
+//update own project by id--------------->>
+const updateProjectController = async (req, res) => {
+  const { id } = req.params
+  const userId = req.user._id
+
+  //---------Validation part------------------>>
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    throw new APiError(400, "Invalid project id");
+  }
+
+  const project = await projectModel.findById(id)
+
+  if (!project) {
+    throw new APiError(404, "Project not found");
+  }
+
+  if (project.owner.toString() !== userId.toString()) {
+    throw new APiError(403, "You are not authorized to update this project");
+  }
+
+  //-------------update features implement------------>>
+  const updateData = {}
+  const { title, description, techStack, githubLink, liveLink } = req.body
+
+  if (title) updateData.title = title
+  if (description) updateData.description = description;
+  if (githubLink) updateData.githubLink = githubLink;
+  if (liveLink) updateData.liveLink = liveLink
+
+  if (techStack) {
+    updateData.techStack = Array.isArray(techStack)
+      ? techStack
+      : techStack
+        .split(",")
+        .map((item) => item.trim())
+        .filter(Boolean)
+  }
+
+  if (req.file) {
+
+    // Purani image delete karo
+    if (project.thumbnail?.fileId) {
+      await storageInstance.deleteFile(project.thumbnail.fileId)
+    }
+
+    // Nayi image upload karo
+    const uploadedThumbnail = await uploadToImagekit(
+      req.file,
+      req.file.originalname,
+      "/hack-sprint/projects"
+    )
+
+    updateData.thumbnail = {
+      url: uploadedThumbnail.url,
+      fileId: uploadedThumbnail.fileId,
+    }
+  }
+
+  const updatedProject = await projectModel.findByIdAndUpdate(
+    id,
+    updateData,
+    { new: true }
+  )
+
+  return res.status(200).json({
+    success: true,
+    message: "Project updated successfully",
+    data: updatedProject,
+  });
+
+}
+
 module.exports = {
   createProjectController,
   getMyProjectsController,
   getAllProjectsController,
   getSingleProjectController,
   deleteProjectController,
+  updateProjectController,
 };
