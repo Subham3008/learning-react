@@ -1,6 +1,6 @@
-const app = require("./src/app")
+const { app, httpServer } = require("./src/app")
 
-app.listen(3000, ()=>{
+httpServer.listen(3000, () => {
   console.log("Server is starting on port 3000");
-  
+
 })
