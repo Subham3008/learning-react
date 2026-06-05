@@ -35,6 +35,10 @@ class SocketService {
     if (eventName === "typing:start") {
       this.simulateTypingResponse(payload);
     }
+
+    if (eventName === "message:send") {
+      this.simulateIncomingMessage(payload);
+    }
   }
 
   emitLocal(eventName, payload) {
@@ -65,6 +69,26 @@ class SocketService {
         isTyping: false,
       });
     }, 2200);
+  }
+
+  simulateIncomingMessage(payload) {
+    window.setTimeout(() => {
+      this.emitLocal("message:new", {
+        mode: payload.mode,
+        roomId: payload.roomId,
+        message: {
+          id: crypto.randomUUID(),
+          senderId: "mock-user",
+          senderName: payload.mode === "group" ? "Priya" : "Aarav",
+          text:
+            payload.mode === "group"
+              ? "Noted. Everyone in this room can see the update."
+              : "Got it, I received your message instantly.",
+          createdAt: new Date().toISOString(),
+          status: "delivered",
+        },
+      });
+    }, 1200);
   }
 }
 

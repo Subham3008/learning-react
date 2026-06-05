@@ -5,6 +5,7 @@ function ConversationPanel({
   conversation,
   draft,
   onDraftChange,
+  onDeleteMessage,
   onSend,
   onTyping,
   typingUser,
@@ -79,6 +80,15 @@ function ConversationPanel({
                   >
                     <span>{formatMessageTime(message.createdAt)}</span>
                     {isMine && <span>{message.status}</span>}
+                    {isMine && (
+                      <button
+                        className="font-semibold underline-offset-2 hover:underline"
+                        onClick={() => onDeleteMessage(message.id)}
+                        type="button"
+                      >
+                        Delete
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>

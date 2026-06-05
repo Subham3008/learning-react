@@ -45,6 +45,9 @@ export function useChatRealtime({ token, user, activeMode, activeRoomId }) {
     });
   };
 
+  const subscribeToMessages = (handler) =>
+    socketService.on("message:new", handler);
+
   const emitMessage = (message) => {
     socketService.emit("message:send", {
       mode: activeMode,
@@ -58,5 +61,6 @@ export function useChatRealtime({ token, user, activeMode, activeRoomId }) {
     emitMessage,
     emitTyping,
     isConnected,
+    subscribeToMessages,
   };
 }

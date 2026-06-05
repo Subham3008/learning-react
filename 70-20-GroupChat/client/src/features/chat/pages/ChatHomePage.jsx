@@ -5,6 +5,7 @@ import ChatShell from "../components/ChatShell.jsx";
 import ChatSidebar from "../components/ChatSidebar.jsx";
 import ConnectionBadge from "../components/ConnectionBadge.jsx";
 import ConversationPanel from "../components/ConversationPanel.jsx";
+import NotificationTray from "../components/NotificationTray.jsx";
 import { useChatRealtime } from "../hooks/useChatRealtime.js";
 
 function ChatHomePage() {
@@ -14,13 +15,19 @@ function ChatHomePage() {
   const [groups, setGroups] = useState([]);
   const [activeConversationId, setActiveConversationId] = useState("");
   const [draft, setDraft] = useState("");
-  const { activeTypingUser, emitMessage, emitTyping, isConnected } =
-    useChatRealtime({
-      activeMode,
-      activeRoomId: activeConversationId,
-      token,
-      user,
-    });
+  const [notifications, setNotifications] = useState([]);
+  const {
+    activeTypingUser,
+    emitMessage,
+    emitTyping,
+    isConnected,
+    subscribeToMessages,
+  } = useChatRealtime({
+    activeMode,
+    activeRoomId: activeConversationId,
+    token,
+    user,
+  });
 
   useEffect(() => {
     let isMounted = true;
@@ -44,6 +51,41 @@ function ChatHomePage() {
       isMounted = false;
     };
   }, []);
+
+  useEffect(() => {
+    const unsubscribe = subscribeToMessages((payload) => {
+      const setter = payload.mode === "private" ? setConversations : setGroups;
+
+      setter((current) =>
+        current.map((conversation) =>
+          conversation.id === payload.roomId
+            ? {
+                ...conversation,
+                unreadCount:
+                  payload.roomId === activeConversationId
+                    ? 0
+                    : conversation.unreadCount + 1,
+                messages: [...conversation.messages, payload.message],
+              }
+            : conversation
+        )
+      );
+
+      setNotifications((current) => [
+        {
+          id: crypto.randomUUID(),
+          mode: payload.mode,
+          roomId: payload.roomId,
+          title: payload.message.senderName || "New message",
+          text: payload.message.text,
+          createdAt: payload.message.createdAt,
+        },
+        ...current,
+      ]);
+    });
+
+    return unsubscribe;
+  }, [activeConversationId, subscribeToMessages]);
 
   const activeConversation = useMemo(
     () => {
@@ -112,6 +154,31 @@ function ChatHomePage() {
     );
   };
 
+  const handleDeleteMessage = (messageId) => {
+    const setter = activeMode === "private" ? setConversations : setGroups;
+
+    setter((current) =>
+      current.map((conversation) =>
+        conversation.id === activeConversationId
+          ? {
+              ...conversation,
+              messages: conversation.messages.filter(
+                (message) => message.id !== messageId
+              ),
+            }
+          : conversation
+      )
+    );
+  };
+
+  const handleOpenNotification = (notification) => {
+    setActiveMode(notification.mode);
+    setActiveConversationId(notification.roomId);
+    setNotifications((current) =>
+      current.filter((item) => item.id !== notification.id)
+    );
+  };
+
   const handleCreateGroup = async (payload) => {
     const group = await chatService.createGroup(payload);
     setGroups((current) => [group, ...current]);
@@ -157,15 +224,22 @@ function ChatHomePage() {
 
       <ChatShell
         sidebar={
-          <ChatSidebar
-            activeMode={activeMode}
-            activeConversationId={activeConversationId}
-            conversations={conversations}
-            groups={groups}
-            onCreateGroup={handleCreateGroup}
-            onModeChange={handleModeChange}
-            onSelect={handleSelectConversation}
-          />
+          <div className="space-y-4">
+            <ChatSidebar
+              activeMode={activeMode}
+              activeConversationId={activeConversationId}
+              conversations={conversations}
+              groups={groups}
+              onCreateGroup={handleCreateGroup}
+              onModeChange={handleModeChange}
+              onSelect={handleSelectConversation}
+            />
+            <NotificationTray
+              notifications={notifications}
+              onClear={() => setNotifications([])}
+              onOpen={handleOpenNotification}
+            />
+          </div>
         }
         conversation={
           activeConversation ? (
@@ -173,6 +247,7 @@ function ChatHomePage() {
               conversation={activeConversation}
               draft={draft}
               onDraftChange={setDraft}
+              onDeleteMessage={handleDeleteMessage}
               onSend={handleSendMessage}
               onTyping={emitTyping}
               typingUser={activeTypingUser}
