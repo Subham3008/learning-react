@@ -1,11 +1,16 @@
+import AttachmentPreview from "./AttachmentPreview.jsx";
 import GroupMemberList from "./GroupMemberList.jsx";
+import MessageAttachment from "./MessageAttachment.jsx";
 import { formatMessageTime } from "../utils/formatters.js";
 
 function ConversationPanel({
+  attachment,
   conversation,
   draft,
   onDraftChange,
   onDeleteMessage,
+  onFileSelect,
+  onRemoveAttachment,
   onSend,
   onTyping,
   typingUser,
@@ -72,7 +77,13 @@ function ConversationPanel({
                       {message.senderName}
                     </p>
                   )}
-                  <p className="text-sm leading-6">{message.text}</p>
+                  <MessageAttachment
+                    attachment={message.attachment}
+                    isMine={isMine}
+                  />
+                  {message.text && (
+                    <p className="text-sm leading-6">{message.text}</p>
+                  )}
                   <div
                     className={`mt-2 flex items-center gap-2 text-[11px] ${
                       isMine ? "text-white/75" : "text-slate-400"
@@ -114,10 +125,23 @@ function ConversationPanel({
           )}
         </div>
 
+        <AttachmentPreview
+          attachment={attachment}
+          onRemove={onRemoveAttachment}
+        />
+
         <form
           className="flex items-end gap-3 border-t border-slate-200 p-4"
           onSubmit={onSend}
         >
+          <label className="flex h-11 w-11 shrink-0 items-center justify-center rounded-md border border-slate-300 bg-white text-sm font-bold text-slate-700 hover:bg-slate-50">
+            +
+            <input
+              className="hidden"
+              onChange={onFileSelect}
+              type="file"
+            />
+          </label>
           <textarea
             className="min-h-11 flex-1 resize-none rounded-md border border-slate-300 px-3 py-2 text-sm leading-6 outline-none focus:border-[#2b7f74] focus:ring-4 focus:ring-[#2b7f74]/10"
             onBlur={() => onTyping(false)}
@@ -128,7 +152,7 @@ function ConversationPanel({
           />
           <button
             className="h-11 rounded-md bg-[#2b7f74] px-5 text-sm font-semibold text-white transition hover:bg-[#236a61] disabled:cursor-not-allowed disabled:opacity-60"
-            disabled={!draft.trim()}
+            disabled={!draft.trim() && !attachment}
             type="submit"
           >
             Send

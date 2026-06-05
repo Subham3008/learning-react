@@ -15,6 +15,7 @@ function ChatHomePage() {
   const [groups, setGroups] = useState([]);
   const [activeConversationId, setActiveConversationId] = useState("");
   const [draft, setDraft] = useState("");
+  const [attachment, setAttachment] = useState(null);
   const [notifications, setNotifications] = useState([]);
   const {
     activeTypingUser,
@@ -77,7 +78,7 @@ function ChatHomePage() {
           mode: payload.mode,
           roomId: payload.roomId,
           title: payload.message.senderName || "New message",
-          text: payload.message.text,
+          text: payload.message.text || payload.message.attachment?.name,
           createdAt: payload.message.createdAt,
         },
         ...current,
@@ -101,14 +102,22 @@ function ChatHomePage() {
   const handleSendMessage = async (event) => {
     event.preventDefault();
 
-    if (!draft.trim() || !activeConversationId) {
+    if ((!draft.trim() && !attachment) || !activeConversationId) {
       return;
     }
 
     const message =
       activeMode === "private"
-        ? await chatService.sendPrivateMessage(activeConversationId, draft.trim())
-        : await chatService.sendGroupMessage(activeConversationId, draft.trim());
+        ? await chatService.sendPrivateMessage(
+            activeConversationId,
+            draft.trim(),
+            attachment
+          )
+        : await chatService.sendGroupMessage(
+            activeConversationId,
+            draft.trim(),
+            attachment
+          );
 
     const updater = (current) =>
       current.map((conversation) =>
@@ -130,11 +139,13 @@ function ChatHomePage() {
     emitMessage(message);
     emitTyping(false);
     setDraft("");
+    setAttachment(null);
   };
 
   const handleModeChange = (mode) => {
     setActiveMode(mode);
     setDraft("");
+    setAttachment(null);
 
     const source = mode === "private" ? conversations : groups;
     setActiveConversationId(source[0]?.id || "");
@@ -143,6 +154,7 @@ function ChatHomePage() {
   const handleSelectConversation = (conversationId) => {
     setActiveConversationId(conversationId);
     setDraft("");
+    setAttachment(null);
 
     const setter = activeMode === "private" ? setConversations : setGroups;
     setter((current) =>
@@ -174,6 +186,7 @@ function ChatHomePage() {
   const handleOpenNotification = (notification) => {
     setActiveMode(notification.mode);
     setActiveConversationId(notification.roomId);
+    setAttachment(null);
     setNotifications((current) =>
       current.filter((item) => item.id !== notification.id)
     );
@@ -185,6 +198,19 @@ function ChatHomePage() {
     setActiveMode("group");
     setActiveConversationId(group.id);
     setDraft("");
+    setAttachment(null);
+  };
+
+  const handleFileSelect = async (event) => {
+    const file = event.target.files?.[0];
+
+    if (!file) {
+      return;
+    }
+
+    const nextAttachment = await chatService.prepareAttachment(file);
+    setAttachment(nextAttachment);
+    event.target.value = "";
   };
 
   return (
@@ -244,10 +270,13 @@ function ChatHomePage() {
         conversation={
           activeConversation ? (
             <ConversationPanel
+              attachment={attachment}
               conversation={activeConversation}
               draft={draft}
               onDraftChange={setDraft}
               onDeleteMessage={handleDeleteMessage}
+              onFileSelect={handleFileSelect}
+              onRemoveAttachment={() => setAttachment(null)}
               onSend={handleSendMessage}
               onTyping={emitTyping}
               typingUser={activeTypingUser}

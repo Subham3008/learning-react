@@ -196,26 +196,38 @@ const chatService = {
     return structuredClone(groupConversations);
   },
 
-  async sendPrivateMessage(conversationId, text) {
+  async sendPrivateMessage(conversationId, text, attachment = null) {
     return {
       id: crypto.randomUUID(),
       conversationId,
       senderId: "me",
       text,
+      attachment,
       createdAt: new Date().toISOString(),
       status: "sent",
     };
   },
 
-  async sendGroupMessage(groupId, text) {
+  async sendGroupMessage(groupId, text, attachment = null) {
     return {
       id: crypto.randomUUID(),
       groupId,
       senderId: "me",
       senderName: "You",
       text,
+      attachment,
       createdAt: new Date().toISOString(),
       status: "sent",
+    };
+  },
+
+  async prepareAttachment(file) {
+    return {
+      id: crypto.randomUUID(),
+      name: file.name,
+      size: file.size,
+      type: file.type || "application/octet-stream",
+      url: URL.createObjectURL(file),
     };
   },
 
