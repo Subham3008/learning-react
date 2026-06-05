@@ -112,7 +112,7 @@ const getSingleProjectController = async (req, res) => {
   const project = await projectModel.findByIdAndUpdate(
     id,                     // Kaunsa document update karna hai
     { $inc: { views: 1 } },   // Kya update karna hai  or $inc: iska matlab value increase karo
-    { new: true }              // Update ka behavior / update hone ke badd wale data ko dikhate ha
+    { returnDocument: 'after' }              // Update ka behavior / update hone ke badd wale data ko dikhate ha
   );
 
   if (!project) {
@@ -217,7 +217,7 @@ const updateProjectController = async (req, res) => {
   const updatedProject = await projectModel.findByIdAndUpdate(
     id,
     updateData,
-    { new: true }
+    { returnDocument: 'after' }
   )
 
   return res.status(200).json({

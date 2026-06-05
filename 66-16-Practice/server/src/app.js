@@ -9,9 +9,22 @@ const authRouter = require("./routes/auth.route")
 const profileRouter = require("./routes/profile.route")
 const projetRouter = require("./routes/projects.route")
 const errorMiddleware = require("./middleware/errorMiddleware")
+const cacheInstance = require("./config/caching")
 
 
 const app = express()
+
+//---------redis connection---------->>
+cacheInstance.on("connect", () => {
+  console.log("Redis connected");
+
+})
+
+cacheInstance.on("error", (err) => {
+  console.log("Redis error:", err);
+
+})
+
 app.use(cors({
   origin: "http://localhost:5173",
   credentials: true,

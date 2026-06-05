@@ -45,10 +45,10 @@ const userSchema = new mongoose.Schema(
       default: false,
     },
 
-    refreshTokenHash: {
-      type: String,
-      select: false,
-    },
+    // refreshTokenHash: {
+    //   type: String,
+    //   select: false,
+    // },
 
     role: {
       type: String,

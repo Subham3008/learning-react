@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken")
 const APiError = require("../utils/apiError")
 const userModel = require("../models/user.model")
+const cacheInstance = require("../config/caching")
 
 const verifyJwt = async (req, res, next) => {
 
@@ -10,11 +11,16 @@ const verifyJwt = async (req, res, next) => {
     throw new APiError(401, "Unauthorized access.")
   }
 
-  const decode = jwt.verify(token, process.env.JWT_ACCESS_SECRET)
+  // Check blacklist first
+  const isBlacklisted = await cacheInstance.get(
+    `blacklist:${token}`
+  );
 
-  if (!decode) {
-    throw new APiError(401, "Unauthorized access.")
+  if (isBlacklisted) {
+    throw new APiError(401, "Token has been revoked.");
   }
+
+  const decode = jwt.verify(token, process.env.JWT_ACCESS_SECRET)
 
   const user = await userModel.findById(decode.userId).select("-passwordHash -refreshTokenHash")
 
