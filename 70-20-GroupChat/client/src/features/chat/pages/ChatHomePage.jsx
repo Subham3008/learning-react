@@ -2,12 +2,14 @@ import { useEffect, useMemo, useState } from "react";
 import { useAuth } from "../../../core/providers/AuthProvider.jsx";
 import chatService from "../../../services/chatService.js";
 import ChatShell from "../components/ChatShell.jsx";
-import ConversationList from "../components/ConversationList.jsx";
+import ChatSidebar from "../components/ChatSidebar.jsx";
 import ConversationPanel from "../components/ConversationPanel.jsx";
 
 function ChatHomePage() {
   const { user, logout } = useAuth();
+  const [activeMode, setActiveMode] = useState("private");
   const [conversations, setConversations] = useState([]);
+  const [groups, setGroups] = useState([]);
   const [activeConversationId, setActiveConversationId] = useState("");
   const [draft, setDraft] = useState("");
 
@@ -15,10 +17,14 @@ function ChatHomePage() {
     let isMounted = true;
 
     async function loadConversations() {
-      const nextConversations = await chatService.getPrivateConversations();
+      const [nextConversations, nextGroups] = await Promise.all([
+        chatService.getPrivateConversations(),
+        chatService.getGroupConversations(),
+      ]);
 
       if (isMounted) {
         setConversations(nextConversations);
+        setGroups(nextGroups);
         setActiveConversationId(nextConversations[0]?.id || "");
       }
     }
@@ -31,11 +37,14 @@ function ChatHomePage() {
   }, []);
 
   const activeConversation = useMemo(
-    () =>
-      conversations.find(
+    () => {
+      const source = activeMode === "private" ? conversations : groups;
+
+      return source.find(
         (conversation) => conversation.id === activeConversationId
-      ),
-    [activeConversationId, conversations]
+      );
+    },
+    [activeConversationId, activeMode, conversations, groups]
   );
 
   const handleSendMessage = async (event) => {
@@ -45,12 +54,12 @@ function ChatHomePage() {
       return;
     }
 
-    const message = await chatService.sendPrivateMessage(
-      activeConversationId,
-      draft.trim()
-    );
+    const message =
+      activeMode === "private"
+        ? await chatService.sendPrivateMessage(activeConversationId, draft.trim())
+        : await chatService.sendGroupMessage(activeConversationId, draft.trim());
 
-    setConversations((current) =>
+    const updater = (current) =>
       current.map((conversation) =>
         conversation.id === activeConversationId
           ? {
@@ -59,8 +68,44 @@ function ChatHomePage() {
               messages: [...conversation.messages, message],
             }
           : conversation
+      );
+
+    if (activeMode === "private") {
+      setConversations(updater);
+    } else {
+      setGroups(updater);
+    }
+
+    setDraft("");
+  };
+
+  const handleModeChange = (mode) => {
+    setActiveMode(mode);
+    setDraft("");
+
+    const source = mode === "private" ? conversations : groups;
+    setActiveConversationId(source[0]?.id || "");
+  };
+
+  const handleSelectConversation = (conversationId) => {
+    setActiveConversationId(conversationId);
+    setDraft("");
+
+    const setter = activeMode === "private" ? setConversations : setGroups;
+    setter((current) =>
+      current.map((conversation) =>
+        conversation.id === conversationId
+          ? { ...conversation, unreadCount: 0 }
+          : conversation
       )
     );
+  };
+
+  const handleCreateGroup = async (payload) => {
+    const group = await chatService.createGroup(payload);
+    setGroups((current) => [group, ...current]);
+    setActiveMode("group");
+    setActiveConversationId(group.id);
     setDraft("");
   };
 
@@ -100,19 +145,14 @@ function ChatHomePage() {
 
       <ChatShell
         sidebar={
-          <ConversationList
+          <ChatSidebar
+            activeMode={activeMode}
             activeConversationId={activeConversationId}
             conversations={conversations}
-            onSelect={(conversationId) => {
-              setActiveConversationId(conversationId);
-              setConversations((current) =>
-                current.map((conversation) =>
-                  conversation.id === conversationId
-                    ? { ...conversation, unreadCount: 0 }
-                    : conversation
-                )
-              );
-            }}
+            groups={groups}
+            onCreateGroup={handleCreateGroup}
+            onModeChange={handleModeChange}
+            onSelect={handleSelectConversation}
           />
         }
         conversation={

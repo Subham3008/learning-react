@@ -1,23 +1,20 @@
 import { formatMessageTime } from "../utils/formatters.js";
 
-function ConversationList({ conversations, activeConversationId, onSelect }) {
+function ConversationList({
+  activeConversationId,
+  conversations,
+  mode = "private",
+  onSelect,
+}) {
   return (
-    <aside className="rounded-md border border-slate-200 bg-white">
+    <div>
       <div className="border-b border-slate-200 p-4">
-        <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-base font-semibold text-slate-950">
-            Private chats
-          </h2>
-          <button
-            className="rounded-md bg-[#2b7f74] px-3 py-2 text-sm font-semibold text-white"
-            type="button"
-          >
-            New
-          </button>
-        </div>
+        <h2 className="mb-4 text-base font-semibold text-slate-950">
+          {mode === "private" ? "Private chats" : "Group rooms"}
+        </h2>
         <input
           className="h-10 w-full rounded-md border border-slate-300 px-3 text-sm outline-none focus:border-[#2b7f74] focus:ring-4 focus:ring-[#2b7f74]/10"
-          placeholder="Search user"
+          placeholder={mode === "private" ? "Search user" : "Search group"}
           type="search"
         />
       </div>
@@ -26,6 +23,14 @@ function ConversationList({ conversations, activeConversationId, onSelect }) {
         {conversations.map((conversation) => {
           const lastMessage = conversation.messages.at(-1);
           const isActive = conversation.id === activeConversationId;
+          const title =
+            mode === "private" ? conversation.participant.name : conversation.name;
+          const avatar =
+            mode === "private"
+              ? conversation.participant.avatar
+              : conversation.avatar;
+          const status =
+            mode === "private" ? conversation.participant.status : "online";
 
           return (
             <button
@@ -39,12 +44,12 @@ function ConversationList({ conversations, activeConversationId, onSelect }) {
               type="button"
             >
               <div className="relative flex h-11 w-11 items-center justify-center rounded-md bg-[#dff5f0] font-bold text-[#236a61]">
-                {conversation.participant.avatar}
+                {avatar}
                 <span
                   className={`absolute -right-0.5 -top-0.5 h-3 w-3 rounded-full border-2 border-white ${
-                    conversation.participant.status === "online"
+                    status === "online"
                       ? "bg-emerald-500"
-                      : conversation.participant.status === "away"
+                      : status === "away"
                         ? "bg-amber-400"
                         : "bg-slate-300"
                   }`}
@@ -54,7 +59,7 @@ function ConversationList({ conversations, activeConversationId, onSelect }) {
               <div className="min-w-0">
                 <div className="flex items-center justify-between gap-2">
                   <p className="truncate text-sm font-semibold text-slate-950">
-                    {conversation.participant.name}
+                    {title}
                   </p>
                 </div>
                 <p className="mt-1 truncate text-sm text-slate-500">
@@ -76,7 +81,7 @@ function ConversationList({ conversations, activeConversationId, onSelect }) {
           );
         })}
       </div>
-    </aside>
+    </div>
   );
 }
 
