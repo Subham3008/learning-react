@@ -1,3 +1,5 @@
+import env from "../config/env.js";
+
 const SESSION_KEY = "chatflow_session";
 
 function createMockSession(user) {
@@ -29,6 +31,22 @@ const authService = {
   },
 
   async login(payload) {
+    if (!env.useMockApi) {
+      const response = await fetch(`${env.apiBaseUrl}/auth/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const session = await response.json();
+
+      if (!response.ok) {
+        throw new Error(session?.message || "Login failed");
+      }
+
+      localStorage.setItem(SESSION_KEY, JSON.stringify(session));
+      return session;
+    }
+
     const session = createMockSession({
       email: payload.email,
       name: payload.email.split("@")[0],
@@ -39,6 +57,22 @@ const authService = {
   },
 
   async register(payload) {
+    if (!env.useMockApi) {
+      const response = await fetch(`${env.apiBaseUrl}/auth/register`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const session = await response.json();
+
+      if (!response.ok) {
+        throw new Error(session?.message || "Registration failed");
+      }
+
+      localStorage.setItem(SESSION_KEY, JSON.stringify(session));
+      return session;
+    }
+
     const session = createMockSession(payload);
     localStorage.setItem(SESSION_KEY, JSON.stringify(session));
     return session;

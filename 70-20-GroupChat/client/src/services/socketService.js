@@ -1,11 +1,20 @@
+import { io } from "socket.io-client";
+import env from "../config/env.js";
+
 class SocketService {
   constructor() {
     this.listeners = new Map();
     this.connected = false;
+    this.socket = null;
   }
 
   connect({ token, userId }) {
     if (!token || !userId) {
+      return;
+    }
+
+    if (!env.useMockSocket) {
+      this.connectRealSocket({ token, userId });
       return;
     }
 
@@ -15,9 +24,41 @@ class SocketService {
     }, 300);
   }
 
+  connectRealSocket({ token, userId }) {
+    if (this.socket?.connected) {
+      return;
+    }
+
+    this.socket = io(env.socketUrl, {
+      auth: { token },
+      query: { userId },
+      transports: ["websocket"],
+    });
+
+    this.socket.on("connect", () => {
+      this.connected = true;
+      this.emitLocal("connection:change", { connected: true });
+    });
+
+    this.socket.on("disconnect", () => {
+      this.connected = false;
+      this.emitLocal("connection:change", { connected: false });
+    });
+
+    this.socket.on("message:new", (payload) => {
+      this.emitLocal("message:new", payload);
+    });
+
+    this.socket.on("typing:update", (payload) => {
+      this.emitLocal("typing:update", payload);
+    });
+  }
+
   disconnect() {
     this.connected = false;
     this.emitLocal("connection:change", { connected: false });
+    this.socket?.disconnect();
+    this.socket = null;
     this.listeners.clear();
   }
 
@@ -32,6 +73,11 @@ class SocketService {
   }
 
   emit(eventName, payload) {
+    if (!env.useMockSocket && this.socket) {
+      this.socket.emit(eventName, payload);
+      return;
+    }
+
     if (eventName === "typing:start") {
       this.simulateTypingResponse(payload);
     }
