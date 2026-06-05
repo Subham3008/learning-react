@@ -3,6 +3,7 @@ import { useAuth } from "../../../core/providers/AuthProvider.jsx";
 import chatService from "../../../services/chatService.js";
 import ChatShell from "../components/ChatShell.jsx";
 import ChatSidebar from "../components/ChatSidebar.jsx";
+import ChatState from "../components/ChatState.jsx";
 import ConnectionBadge from "../components/ConnectionBadge.jsx";
 import ConversationPanel from "../components/ConversationPanel.jsx";
 import NotificationTray from "../components/NotificationTray.jsx";
@@ -16,6 +17,8 @@ function ChatHomePage() {
   const [activeConversationId, setActiveConversationId] = useState("");
   const [draft, setDraft] = useState("");
   const [attachment, setAttachment] = useState(null);
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
   const [notifications, setNotifications] = useState([]);
   const {
     activeTypingUser,
@@ -34,15 +37,25 @@ function ChatHomePage() {
     let isMounted = true;
 
     async function loadConversations() {
-      const [nextConversations, nextGroups] = await Promise.all([
-        chatService.getPrivateConversations(),
-        chatService.getGroupConversations(),
-      ]);
+      try {
+        const [nextConversations, nextGroups] = await Promise.all([
+          chatService.getPrivateConversations(),
+          chatService.getGroupConversations(),
+        ]);
 
-      if (isMounted) {
-        setConversations(nextConversations);
-        setGroups(nextGroups);
-        setActiveConversationId(nextConversations[0]?.id || "");
+        if (isMounted) {
+          setConversations(nextConversations);
+          setGroups(nextGroups);
+          setActiveConversationId(nextConversations[0]?.id || "");
+        }
+      } catch (err) {
+        if (isMounted) {
+          setError(err.message || "Unable to load chats");
+        }
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
+        }
       }
     }
 
@@ -106,18 +119,25 @@ function ChatHomePage() {
       return;
     }
 
-    const message =
-      activeMode === "private"
-        ? await chatService.sendPrivateMessage(
-            activeConversationId,
-            draft.trim(),
-            attachment
-          )
-        : await chatService.sendGroupMessage(
-            activeConversationId,
-            draft.trim(),
-            attachment
-          );
+    let message;
+
+    try {
+      message =
+        activeMode === "private"
+          ? await chatService.sendPrivateMessage(
+              activeConversationId,
+              draft.trim(),
+              attachment
+            )
+          : await chatService.sendGroupMessage(
+              activeConversationId,
+              draft.trim(),
+              attachment
+            );
+    } catch (err) {
+      setError(err.message || "Unable to send message");
+      return;
+    }
 
     const updater = (current) =>
       current.map((conversation) =>
@@ -193,12 +213,16 @@ function ChatHomePage() {
   };
 
   const handleCreateGroup = async (payload) => {
-    const group = await chatService.createGroup(payload);
-    setGroups((current) => [group, ...current]);
-    setActiveMode("group");
-    setActiveConversationId(group.id);
-    setDraft("");
-    setAttachment(null);
+    try {
+      const group = await chatService.createGroup(payload);
+      setGroups((current) => [group, ...current]);
+      setActiveMode("group");
+      setActiveConversationId(group.id);
+      setDraft("");
+      setAttachment(null);
+    } catch (err) {
+      setError(err.message || "Unable to create group");
+    }
   };
 
   const handleFileSelect = async (event) => {
@@ -208,10 +232,25 @@ function ChatHomePage() {
       return;
     }
 
-    const nextAttachment = await chatService.prepareAttachment(file);
-    setAttachment(nextAttachment);
-    event.target.value = "";
+    try {
+      const nextAttachment = await chatService.prepareAttachment(file);
+      setAttachment(nextAttachment);
+      event.target.value = "";
+    } catch (err) {
+      setError(err.message || "Unable to attach file");
+    }
   };
+
+  if (isLoading) {
+    return (
+      <main className="min-h-screen bg-[#f7f8fb]">
+        <ChatState
+          message="Preparing your private and group conversations."
+          title="Loading chats"
+        />
+      </main>
+    );
+  }
 
   return (
     <main className="min-h-screen bg-[#f7f8fb]">
@@ -268,19 +307,21 @@ function ChatHomePage() {
           </div>
         }
         conversation={
-          activeConversation ? (
-            <ConversationPanel
-              attachment={attachment}
-              conversation={activeConversation}
-              draft={draft}
-              onDraftChange={setDraft}
-              onDeleteMessage={handleDeleteMessage}
-              onFileSelect={handleFileSelect}
-              onRemoveAttachment={() => setAttachment(null)}
-              onSend={handleSendMessage}
-              onTyping={emitTyping}
-              typingUser={activeTypingUser}
-            />
+          error ? (
+            <ChatState message={error} title="Something went wrong" />
+          ) : activeConversation ? (
+              <ConversationPanel
+                attachment={attachment}
+                conversation={activeConversation}
+                draft={draft}
+                onDraftChange={setDraft}
+                onDeleteMessage={handleDeleteMessage}
+                onFileSelect={handleFileSelect}
+                onRemoveAttachment={() => setAttachment(null)}
+                onSend={handleSendMessage}
+                onTyping={emitTyping}
+                typingUser={activeTypingUser}
+              />
           ) : (
             <section className="flex min-h-[620px] items-center justify-center rounded-md border border-slate-200 bg-white p-6 text-center">
               <p className="text-sm text-slate-500">No conversation found.</p>

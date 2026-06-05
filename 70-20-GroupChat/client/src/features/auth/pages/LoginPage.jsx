@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../../core/providers/AuthProvider.jsx";
+import AlertMessage from "../../../shared/components/AlertMessage.jsx";
 import AuthCard from "../../../shared/components/AuthCard.jsx";
 import FormInput from "../../../shared/components/FormInput.jsx";
 import PrimaryButton from "../../../shared/components/PrimaryButton.jsx";
@@ -10,6 +11,7 @@ function LoginPage() {
   const location = useLocation();
   const { login } = useAuth();
   const [form, setForm] = useState({ email: "", password: "" });
+  const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const redirectTo = location.state?.from?.pathname || "/";
@@ -24,9 +26,16 @@ function LoginPage() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     setIsSubmitting(true);
-    await login(form);
-    setIsSubmitting(false);
-    navigate(redirectTo, { replace: true });
+    setError("");
+
+    try {
+      await login(form);
+      navigate(redirectTo, { replace: true });
+    } catch (err) {
+      setError(err.message || "Login failed");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -34,6 +43,8 @@ function LoginPage() {
       title="Login"
       subtitle="Sign in first, then your private and group chats will open."
     >
+      <AlertMessage>{error}</AlertMessage>
+
       <form className="space-y-4" onSubmit={handleSubmit}>
         <FormInput
           id="email"

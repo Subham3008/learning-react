@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../../core/providers/AuthProvider.jsx";
+import AlertMessage from "../../../shared/components/AlertMessage.jsx";
 import AuthCard from "../../../shared/components/AuthCard.jsx";
 import FormInput from "../../../shared/components/FormInput.jsx";
 import PrimaryButton from "../../../shared/components/PrimaryButton.jsx";
@@ -13,6 +14,7 @@ function RegisterPage() {
     email: "",
     password: "",
   });
+  const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (event) => {
@@ -25,9 +27,16 @@ function RegisterPage() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     setIsSubmitting(true);
-    await register(form);
-    setIsSubmitting(false);
-    navigate("/", { replace: true });
+    setError("");
+
+    try {
+      await register(form);
+      navigate("/", { replace: true });
+    } catch (err) {
+      setError(err.message || "Registration failed");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -35,6 +44,8 @@ function RegisterPage() {
       title="Register"
       subtitle="Create a user account before entering the chat workspace."
     >
+      <AlertMessage>{error}</AlertMessage>
+
       <form className="space-y-4" onSubmit={handleSubmit}>
         <FormInput
           id="name"
