@@ -1,8 +1,20 @@
 import GroupMemberList from "./GroupMemberList.jsx";
 import { formatMessageTime } from "../utils/formatters.js";
 
-function ConversationPanel({ conversation, draft, onDraftChange, onSend }) {
+function ConversationPanel({
+  conversation,
+  draft,
+  onDraftChange,
+  onSend,
+  onTyping,
+  typingUser,
+}) {
   const isGroup = conversation.type === "group";
+
+  const handleDraftChange = (event) => {
+    onDraftChange(event.target.value);
+    onTyping(Boolean(event.target.value.trim()));
+  };
 
   return (
     <section className="flex min-h-[620px] overflow-hidden rounded-md border border-slate-200 bg-white">
@@ -82,13 +94,24 @@ function ConversationPanel({ conversation, draft, onDraftChange, onSend }) {
           )}
         </div>
 
+        <div className="min-h-9 border-t border-slate-200 bg-white px-4 py-2">
+          {typingUser ? (
+            <p className="text-sm font-medium text-[#236a61]">
+              {typingUser.name} is typing...
+            </p>
+          ) : (
+            <p className="text-sm text-slate-400">Socket room ready</p>
+          )}
+        </div>
+
         <form
           className="flex items-end gap-3 border-t border-slate-200 p-4"
           onSubmit={onSend}
         >
           <textarea
             className="min-h-11 flex-1 resize-none rounded-md border border-slate-300 px-3 py-2 text-sm leading-6 outline-none focus:border-[#2b7f74] focus:ring-4 focus:ring-[#2b7f74]/10"
-            onChange={(event) => onDraftChange(event.target.value)}
+            onBlur={() => onTyping(false)}
+            onChange={handleDraftChange}
             placeholder={isGroup ? "Send message to group" : "Type a message"}
             rows={1}
             value={draft}

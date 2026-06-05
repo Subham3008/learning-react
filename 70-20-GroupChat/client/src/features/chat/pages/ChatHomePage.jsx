@@ -3,15 +3,24 @@ import { useAuth } from "../../../core/providers/AuthProvider.jsx";
 import chatService from "../../../services/chatService.js";
 import ChatShell from "../components/ChatShell.jsx";
 import ChatSidebar from "../components/ChatSidebar.jsx";
+import ConnectionBadge from "../components/ConnectionBadge.jsx";
 import ConversationPanel from "../components/ConversationPanel.jsx";
+import { useChatRealtime } from "../hooks/useChatRealtime.js";
 
 function ChatHomePage() {
-  const { user, logout } = useAuth();
+  const { token, user, logout } = useAuth();
   const [activeMode, setActiveMode] = useState("private");
   const [conversations, setConversations] = useState([]);
   const [groups, setGroups] = useState([]);
   const [activeConversationId, setActiveConversationId] = useState("");
   const [draft, setDraft] = useState("");
+  const { activeTypingUser, emitMessage, emitTyping, isConnected } =
+    useChatRealtime({
+      activeMode,
+      activeRoomId: activeConversationId,
+      token,
+      user,
+    });
 
   useEffect(() => {
     let isMounted = true;
@@ -76,6 +85,8 @@ function ChatHomePage() {
       setGroups(updater);
     }
 
+    emitMessage(message);
+    emitTyping(false);
     setDraft("");
   };
 
@@ -123,6 +134,7 @@ function ChatHomePage() {
           </div>
 
           <div className="flex items-center gap-3">
+            <ConnectionBadge isConnected={isConnected} />
             <div className="hidden text-right sm:block">
               <p className="text-sm font-semibold text-slate-900">
                 {user?.name}
@@ -162,6 +174,8 @@ function ChatHomePage() {
               draft={draft}
               onDraftChange={setDraft}
               onSend={handleSendMessage}
+              onTyping={emitTyping}
+              typingUser={activeTypingUser}
             />
           ) : (
             <section className="flex min-h-[620px] items-center justify-center rounded-md border border-slate-200 bg-white p-6 text-center">
