@@ -10,6 +10,7 @@ const makeUserResponse = (user) => {
   };
 };
 
+//----------Register controller-------------------->>
 const registerController = async (req, res) => {
   const { name, email, password } = req.body;
 
@@ -37,6 +38,7 @@ const registerController = async (req, res) => {
   });
 };
 
+//-------------logged in controller--------------->>
 const loginController = async (req, res) => {
   const { email, password } = req.body;
 
