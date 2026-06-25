@@ -1,0 +1,15 @@
+services:     //Yahan hum Docker Compose ko batate hain ki kitne containers (services) chalane hain.
+  backend:    //Ye service ka naam hai.
+    build: .    // . ka matlab hai: Current Folder
+    volumes:      //Volume ka matlab: Host machine aur Docker container ke beech files share karna.
+      - .:/app      //Host_Path : Container_Path  //  .   Tumhara current project folder
+    ports:
+      - "3000:3000"  //Host aur Container kis port se communicate karenge. //Agar app container me: 5000 pe chal raha hota, to likhte: ports:  - "3000:5000"
+    env_file:       //Is service ke liye environment variables load karo.
+      - .env
+      
+
+build → Dockerfile se image create karta hai.
+volumes → Host aur container ke beech files share karta hai (live sync for development).
+ports → Host aur container ke ports ko map karta hai.
+env_file → .env file ke environment variables ko container ke andar inject karta hai.
