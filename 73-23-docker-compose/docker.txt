@@ -13,3 +13,17 @@ build → Dockerfile se image create karta hai.
 volumes → Host aur container ke beech files share karta hai (live sync for development).
 ports → Host aur container ke ports ko map karta hai.
 env_file → .env file ke environment variables ko container ke andar inject karta hai.
+
+
+
+FROM node:22-alpine   //Ye base image choose karta hai. "Mujhe ek Linux operating system chahiye jisme Node.js 22 pehle se installed ho."
+
+WORKDIR /app          //Ye container ke andar current working directory set karta hai.
+
+COPY package*.json .    //COPY <Source> <Destination>
+
+RUN npm install       //Ab Docker ye command run karega:
+
+COPY . .          //Yahan pehla . matlab: Current Folder, Dusra . matlab: Current Working Directory
+
+CMD ["npm", "run", "dev"]  //Container start hone ke baad kaunsi command chalani hai.
