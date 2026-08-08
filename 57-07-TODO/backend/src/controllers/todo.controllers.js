@@ -1,6 +1,6 @@
 const todoModel = require("../models/todo.models")
 
-//create
+//create list
 let createListController = async (req, res) => {
   try {
     let { name, description } = req.body
@@ -29,7 +29,7 @@ let createListController = async (req, res) => {
   }
 }
 
-//read
+//read list
 let readListController = async (req, res) => {
   try {
 
@@ -57,9 +57,76 @@ let readListController = async (req, res) => {
   }
 }
 
+//updated list
 let updateListController = async (req, res) => {
   try {
-    
+    let { id } = req.params
+    if (!id) {
+      return res.status(400).json({
+        message: "Id not found"
+      })
+    }
+
+    let { name, description } = req.body
+    if (!name || !description) {
+      return res.status(400).json({
+        message: "All fields are required."
+      })
+    }
+
+    let updatedList = await todoModel.findByIdAndUpdate(id,
+      {
+        name,
+        description
+      },
+      {
+        new: true
+      }
+    )
+
+    if (!updatedList) {
+      return res.status(404).json({
+        message: "List not found."
+      });
+    }
+
+    return res.status(200).json({
+      message: "List updated successfully.",
+      updatedList
+    })
+
+  } catch (err) {
+    console.log("Error from Api:", err);
+    return res.status(500).json({
+      message: "Internal server error."
+    })
+  }
+}
+
+//delete list
+let deleteListController = async (req, res) => {
+  try {
+    let { id } = req.params
+    if (!id) {
+      return res.status(400).json({
+        message: "Id not found"
+      })
+    }
+
+    let deleteList = await todoModel.findByIdAndDelete(id)
+
+    if (!deleteList) {
+      return res.status(404).json({
+        message: "List not found."
+      });
+    }
+
+    return res.status(200).json({
+      message: "List deleted successfully.",
+      deleteList
+    })
+
+
   } catch (err) {
     console.log("Error from Api:", err);
     return res.status(500).json({
@@ -69,8 +136,9 @@ let updateListController = async (req, res) => {
 }
 
 
-
 module.exports = {
   createListController,
-  readListController
+  readListController,
+  updateListController,
+  deleteListController
 }
