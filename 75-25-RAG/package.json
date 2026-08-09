@@ -1,0 +1,22 @@
+{
+  "dependencies": {
+    "@langchain/core": "^1.2.5",
+    "@langchain/mistralai": "^1.2.0",
+    "@langchain/textsplitters": "^1.0.1",
+    "@pinecone-database/pinecone": "^8.2.0",
+    "dotenv": "^17.4.2",
+    "langchain": "^1.5.5",
+    "pdf-parse": "^2.4.5"
+  },
+  "name": "75-25-rag",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module"
+}
