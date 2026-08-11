@@ -88,7 +88,6 @@ while(true){
   const response = await agent.invoke({
     messages
   }) //now use agent instead of model
-
   // messages.push(new AIMessage(response.text)) //push AI output inside messages array
 
   console.log("Response:", response)
