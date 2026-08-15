@@ -1,4 +1,3 @@
-import axios from "axios";
 import { axiosIntance } from "../config/axiosInstance";
 
 let cacheData = null;

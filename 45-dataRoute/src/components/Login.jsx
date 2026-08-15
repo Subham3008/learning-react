@@ -28,7 +28,7 @@ const Login = () => {
       return;
     }
     setLoggedUser(user);
-    navigate("/dashboard")
+    navigate("/dashboard");
     localStorage.setItem("logged user", JSON.stringify(user));
     toast.success("User logged in successfully.");
     reset();
