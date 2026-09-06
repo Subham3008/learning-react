@@ -17,7 +17,9 @@ const AppRoutes = () => {
   useEffect(() => {
     if (!token) {
       dispatch(removeUser());
+      return;
     }
+    
     (async () => {
       try {
         const res = await axiosInstance.get("/me", {
